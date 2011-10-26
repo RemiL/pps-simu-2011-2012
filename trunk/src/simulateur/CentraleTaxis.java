@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 public class CentraleTaxis {
 
-	private ArrayList<Taxi> taxis;
+	private Taxi[] taxis;
 	private LinkedList<Client> clientsEnAttente;
 	private Point2D.Double position;
 
@@ -14,11 +14,21 @@ public class CentraleTaxis {
 
 		this.position = position;
 		this.clientsEnAttente = new LinkedList<Client>();
-		this.taxis = new ArrayList<Taxi>();
+		this.taxis = new Taxi[nombreTaxis];
 
 		for (int i = 0; i < nombreTaxis; i++) {
-			taxis.add(new Taxi(position, vitesse));
+			taxis[i]= new Taxi(position, vitesse);
 		}
+	}
+
+	public void deplacerTaxis() {
+		
+		
+	}
+
+	public void ajouterClient(Client client) {
+		clientsEnAttente.add(client);
+		
 	}
 
 }
