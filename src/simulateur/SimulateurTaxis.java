@@ -17,9 +17,8 @@ public class SimulateurTaxis {
 	}
 
 	public void simuler(double dureeSimulation, int nbEchantillons, int nbTaxis, Point2D.Double position,
-			double vitesse, GenerateurApparitionClient genApparitionClient, 
-			GenerateurPositionDepart genPositionDepart,GenerateurPositionArrivee genPositionArrivee,
-			GenerateurTempsAttente genTempsAttente) {
+			double vitesse, GenerateurApparitionClient genApparitionClient, GenerateurPositionDepart genPositionDepart,
+			GenerateurPositionArrivee genPositionArrivee, GenerateurTempsAttente genTempsAttente) {
 		this.nbEchantillons = nbEchantillons;
 		this.dureeSimulation = dureeSimulation;
 		this.dt = dureeSimulation / nbEchantillons;
@@ -28,34 +27,39 @@ public class SimulateurTaxis {
 		this.genPositionDepart = genPositionDepart;
 		this.genTempsAttente = genTempsAttente;
 
-		centrale = new CentraleTaxis(nbTaxis, position, vitesse);
+		centrale = new CentraleTaxis(nbTaxis, position, vitesse, dt);
 
+		// On effectue la boucle n+1 fois puisque la première itération sert
+		// à l'initialisation, les taxis effectueront donc bien n mouvements.
 		for (int i = 0; i <= nbEchantillons; i++) {
-			// bouger taxis
+			// On met à jour l'horloge, on décide de ne pas utiliser
+			// l'incrémentation pour limiter le bruit numérique.
+			Horloge.setTemps(i * dt);
+			// On affecte les clients en attente aux taxis disponibles,
+			centrale.affecterTaxis();
+			// on calcule le déplacement des taxis pendant l'intervalle dt
 			centrale.deplacerTaxis();
+			// puis on génère l'apparition d'éventuels nouveaux clients.
 			simulerApparitionClients();
-
 		}
-
 	}
 
 	private void simulerApparitionClients() {
 		int nbClients = genApparitionClient.genererNombreApparitionClient();
-		Client client;
 		Point2D.Double ptDepart;
 		Point2D.Double ptArrivee;
-		
+		double tempsAttenteMax;
+
 		for (int i = 0; i < nbClients; i++) {
 			ptDepart = genPositionDepart.genererPositionDepart();
 			ptArrivee = genPositionArrivee.genererPositionArrivee(ptDepart);
-			client = new Client(ptDepart, ptArrivee, genTempsAttente.genererTempsAttente());
-			centrale.ajouterClient(client);
-		}
+			tempsAttenteMax = genTempsAttente.genererTempsAttente();
 
+			centrale.ajouterClient(new Client(ptDepart, ptArrivee, tempsAttenteMax));
+		}
 	}
 
 	public static void main(String[] args) {
 
 	}
-
 }
