@@ -6,12 +6,22 @@ import java.util.HashMap;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * Un panneau d'affichage pour le résultat de la simulation
+ */
 public class AffichageResultat extends JPanel
 {
+	/**
+	 * Construit un affichage du résultat
+	 * @param parametres les paramètres de la simulation
+	 * @param typeSimulation le type de la simulation (0 ou 1)
+	 * @param resultat le résultat de la simulation
+	 */
 	public AffichageResultat(HashMap<String, String> parametres, int typeSimulation, double resultat)
 	{
 		super(new GridLayout(parametres.size() + 1, 2, 20, 10));
 		
+		// Affiche les paramètres de la simulation
 		for(String param : parametres.keySet())
 		{
 			JLabel label = new JLabel(param);
@@ -20,6 +30,7 @@ public class AffichageResultat extends JPanel
 			this.add(new JLabel(parametres.get(param)));
 		}
 		
+		// Affiche le résultat de la simulation
 		if(typeSimulation == 0)
 		{
 			JLabel label = new JLabel("Résultat (Nombre de taxis) : ");
