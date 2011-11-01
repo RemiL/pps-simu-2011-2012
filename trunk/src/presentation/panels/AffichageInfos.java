@@ -12,15 +12,17 @@ import javax.swing.JPanel;
 /**
  * Un panneau d'affichage du temps qui passe
  */
-public class AffichageTemps extends JPanel
+public class AffichageInfos extends JPanel
 {
 	/** Le temps actuel */
 	private int temps;
+	/** Le nombre de taxis */
+	private int nbTaxis;
 	
 	/**
 	 *  Construit un affichage du temps
 	 */
-	public AffichageTemps()
+	public AffichageInfos()
 	{
 		super();
 		this.setPreferredSize(new Dimension(0, 30));
@@ -41,11 +43,12 @@ public class AffichageTemps extends JPanel
 		g2D.setColor(Color.black);
 		g2D.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
-		// Affichage du texte représentant le temps
+		// Affichage du texte représentant le temps et du nombre de taxis
 		Font font = new Font("Arial", Font.BOLD, 20);
 		g2D.setFont(font);
 		g2D.setColor(Color.white);          
 		g2D.drawString("Temps actuel : " + temps, 10, 20);
+		g2D.drawString("Nombre de taxis : " + nbTaxis, this.getWidth() - 220, 20);
 	}
 	
 	/**
@@ -55,5 +58,14 @@ public class AffichageTemps extends JPanel
 	public void setTemps(int tempsActuel)
 	{
 		temps = tempsActuel;
+	}
+
+	/**
+	 * Modifie le nombre de taxis
+	 * @param nbTaxis le nombre de taxis
+	 */
+	public void setNbTaxis(int nbTaxis)
+	{
+		this.nbTaxis = nbTaxis;
 	}
 }

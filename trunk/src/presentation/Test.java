@@ -1,22 +1,38 @@
 package presentation;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class Test
+public class Test implements ActionListener
 {
-	public static void main(String[] args)
+	private Fenetre fenetre;
+	private boolean play;
+	private boolean stop;
+	private Thread t;
+	
+	public Test()
 	{
-        Fenetre fenetre = new Fenetre();
-        fenetre.initAffichageInit();
-        
-        try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+		fenetre = new Fenetre();
+		fenetre.getBoutonSimuler().addActionListener(this);
+		fenetre.getBoutonStop().addActionListener(this);
+		fenetre.getBoutonPausePlay().addActionListener(this);
+		play = true;
+		stop = false;
+	}
+	
+	public void configurer()
+	{
+		String[] labels1 = { "First Name", "Middle Initial", "Last Name", "Age" };
+	    int[] widths1 = { 15, 1, 15, 3 };
+	    String[] labels2 = { "First Name2", "Middle Initial2", "Last Name2", "Age2" };
+	    int[] widths2 = { 15, 1, 15, 3 };
+		fenetre.initAffichageInit(labels1, widths1, labels2, widths2);
+	}
+	
+	public void simuler()
+	{
         fenetre.initAffichageVille(10, 1000);
         
         Point2D.Double[] listeTaxis = new Point2D.Double[10];
@@ -37,20 +53,63 @@ public class Test
 		listeClients.add(new Point2D.Double(1000, 0));
 		listeClients.add(new Point2D.Double(0, 1000));
 		
-		for(int i=0; i<1000; i++)
+		for(int i=0; i<100; i++)
         {
-			fenetre.setTemps(i);
-    		fenetre.setAffichageVille(listeTaxis, listeClients);
-    		
-    		listeTaxis[0].x += 10;
-    		listeTaxis[0].y += 10;
-    		
+			if(stop)
+				break;
+			if(play)
+			{
+				fenetre.setTemps(i, 10);
+	    		fenetre.setAffichageVille(listeTaxis, listeClients);
+	    		
+	    		listeTaxis[0].x += 10;
+	    		listeTaxis[0].y += 10;
+			}
+			else
+				i--;
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}			
         }
+		
+		fenetre.changeBoutonPausePlay(play, true);
+	}
+	
+	public static void main(String[] args)
+	{
+        Test test = new Test();
+        test.configurer();
+	}
+	
+	public void actionPerformed(ActionEvent arg0)
+	{
+		if(arg0.getSource() == fenetre.getBoutonSimuler())
+		{
+			System.out.println(fenetre.getValues());
+			System.out.println(fenetre.getSimulationType());
+			t = new Thread(new PlaySimulation());
+            t.start();
+		}
+		else if(arg0.getSource() == fenetre.getBoutonStop())
+		{
+			stop = true;
+			fenetre.changeBoutonPausePlay(play, stop);
+		}
+		else if(arg0.getSource() == fenetre.getBoutonPausePlay())
+		{
+			play = !play;
+			fenetre.changeBoutonPausePlay(play, stop);
+		}
+	}
+	
+	class PlaySimulation implements Runnable
+	{
+		@Override
+		public void run() 
+		{
+			simuler();
+		}
 	}
 }
