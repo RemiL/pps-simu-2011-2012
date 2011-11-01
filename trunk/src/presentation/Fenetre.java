@@ -8,10 +8,12 @@ import java.util.HashMap;
  
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import presentation.panels.AffichageInit;
 import presentation.panels.AffichageInfos;
+import presentation.panels.AffichageResultat;
 import presentation.panels.AffichageVille;
 
 /**
@@ -85,6 +87,14 @@ public class Fenetre extends JFrame
 		this.add(pan, BorderLayout.SOUTH);
 		affichageVille.revalidate();
 		affichageInfos.revalidate();
+	}
+	
+	public void afficherResultat(HashMap<String, String> parametres, int typeSimulation, double resultat)
+	{
+		this.getContentPane().removeAll();
+		AffichageResultat pan = new AffichageResultat(parametres, typeSimulation, resultat);
+		this.add(pan, BorderLayout.CENTER);
+		pan.revalidate();
 	}
 	
 	/**

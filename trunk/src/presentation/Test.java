@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Test implements ActionListener
 {
@@ -11,6 +12,8 @@ public class Test implements ActionListener
 	private boolean play;
 	private boolean stop;
 	private Thread t;
+	private HashMap<String, String> parametres;
+	private int typeSimulation;
 	
 	public Test()
 	{
@@ -24,9 +27,9 @@ public class Test implements ActionListener
 	
 	public void configurer()
 	{
-		String[] labels1 = { "First Name", "Middle Initial", "Last Name", "Age" };
+		String[] labels1 = { "First Name : ", "Middle Initial : ", "Last Name : ", "Age : " };
 	    int[] widths1 = { 15, 1, 15, 3 };
-	    String[] labels2 = { "First Name2", "Middle Initial2", "Last Name2", "Age2" };
+	    String[] labels2 = { "First Name2 : ", "Middle Initial2 : ", "Last Name2 : ", "Age2 : " };
 	    int[] widths2 = { 15, 1, 15, 3 };
 		fenetre.initAffichageInit(labels1, widths1, labels2, widths2);
 	}
@@ -53,7 +56,7 @@ public class Test implements ActionListener
 		listeClients.add(new Point2D.Double(1000, 0));
 		listeClients.add(new Point2D.Double(0, 1000));
 		
-		for(int i=0; i<100; i++)
+		for(int i=0; i<10; i++)
         {
 			if(stop)
 				break;
@@ -75,6 +78,7 @@ public class Test implements ActionListener
         }
 		
 		fenetre.changeBoutonPausePlay(play, true);
+		fenetre.afficherResultat(parametres, typeSimulation, 50);
 	}
 	
 	public static void main(String[] args)
@@ -87,8 +91,10 @@ public class Test implements ActionListener
 	{
 		if(arg0.getSource() == fenetre.getBoutonSimuler())
 		{
-			System.out.println(fenetre.getValues());
-			System.out.println(fenetre.getSimulationType());
+			parametres = fenetre.getValues();
+			typeSimulation = fenetre.getSimulationType();
+			System.out.println(parametres);
+			System.out.println(typeSimulation);
 			t = new Thread(new PlaySimulation());
             t.start();
 		}
