@@ -5,12 +5,14 @@ import java.util.LinkedList;
 
 public class Taxi {
 
+	private ReferentielTemps referentielTemps;
+
 	private CentraleTaxis centrale;
 	private Point2D.Double position;
 	private double vitesse;
 	private LinkedList<Client> clients;
 
-	public Taxi(CentraleTaxis centrale, Point2D.Double positionDepart, double vitesse) {
+	public Taxi(ReferentielTemps referentielTemps, CentraleTaxis centrale, Point2D.Double positionDepart, double vitesse) {
 		this.centrale = centrale;
 		this.position = positionDepart;
 		this.vitesse = vitesse;
@@ -28,8 +30,11 @@ public class Taxi {
 	}
 
 	public double getDistance(Client client) {
-		// TODO Auto-generated method stub
-		return 0;
+		return position.distance(client.getDepart());
+	}
+
+	public double getDistanceCarre(Client client) {
+		return position.distanceSq(client.getDepart());
 	}
 
 	public void affecterClient(Client client) {
@@ -42,7 +47,7 @@ public class Taxi {
 		// TODO : changer la direction du taxi pour aller vers le client
 	}
 
-	public void rouler(/* TODO : vitesse et dt ? */) {
+	public void rouler(/* TODO : vitesse ? */) {
 		// TODO : faire avancer le taxi et vérifier si on a atteint notre
 		// "cible"
 		// cible --> client ou destination --> faire ce qu'il faut !

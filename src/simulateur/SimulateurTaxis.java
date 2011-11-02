@@ -4,10 +4,11 @@ import java.awt.geom.Point2D;
 
 public class SimulateurTaxis {
 
-	private CentraleTaxis centrale;
 	private double dureeSimulation;
 	private int nbEchantillons;
-	private double dt;
+	private ReferentielTemps referentielTemps;
+
+	private CentraleTaxis centrale;
 	private GenerateurApparitionClient genApparitionClient;
 	private GenerateurPositionDepart genPositionDepart;
 	private GenerateurPositionArrivee genPositionArrivee;
@@ -21,26 +22,26 @@ public class SimulateurTaxis {
 			GenerateurPositionArrivee genPositionArrivee, GenerateurTempsAttente genTempsAttente) {
 		this.nbEchantillons = nbEchantillons;
 		this.dureeSimulation = dureeSimulation;
-		this.dt = dureeSimulation / nbEchantillons;
+		this.referentielTemps = new ReferentielTemps(dureeSimulation / nbEchantillons);
+
 		this.genApparitionClient = genApparitionClient;
 		this.genPositionArrivee = genPositionArrivee;
 		this.genPositionDepart = genPositionDepart;
 		this.genTempsAttente = genTempsAttente;
 
-		centrale = new CentraleTaxis(nbTaxis, position, vitesse, dt);
+		centrale = new CentraleTaxis(referentielTemps, nbTaxis, position, vitesse);
 
 		// On effectue la boucle n+1 fois puisque la première itération sert
 		// à l'initialisation, les taxis effectueront donc bien n mouvements.
 		for (int i = 0; i <= nbEchantillons; i++) {
-			// On met à jour l'horloge, on décide de ne pas utiliser
-			// l'incrémentation pour limiter le bruit numérique.
-			Horloge.setTemps(i * dt);
 			// On affecte les clients en attente aux taxis disponibles,
 			centrale.affecterTaxis();
 			// on calcule le déplacement des taxis pendant l'intervalle dt
 			centrale.deplacerTaxis();
 			// puis on génère l'apparition d'éventuels nouveaux clients.
 			simulerApparitionClients();
+			// On incrémente l'horloge.
+			referentielTemps.incrementerTemps();
 		}
 	}
 
@@ -55,7 +56,7 @@ public class SimulateurTaxis {
 			ptArrivee = genPositionArrivee.genererPositionArrivee(ptDepart);
 			tempsAttenteMax = genTempsAttente.genererTempsAttente();
 
-			centrale.ajouterClient(new Client(ptDepart, ptArrivee, tempsAttenteMax));
+			centrale.ajouterClient(new Client(referentielTemps, ptDepart, ptArrivee, tempsAttenteMax));
 		}
 	}
 
