@@ -6,23 +6,25 @@ import java.util.ListIterator;
 
 public class CentraleTaxis {
 
+	private ReferentielTemps referentielTemps;
+
 	private Taxi[] taxis;
 	private LinkedList<Client> clientsEnAttente;
 	private Point2D.Double position;
-	private double dt;
 	private int nbClients;
 	private int nbClientsPerdus;
 
-	public CentraleTaxis(int nombreTaxis, Point2D.Double position, double vitesse, double dt) {
+	public CentraleTaxis(ReferentielTemps referentielTemps, int nombreTaxis, Point2D.Double position, double vitesse) {
+		this.referentielTemps = referentielTemps;
+
 		this.position = position;
 		this.clientsEnAttente = new LinkedList<Client>();
 		this.taxis = new Taxi[nombreTaxis];
 
 		for (int i = 0; i < nombreTaxis; i++) {
-			taxis[i] = new Taxi(this, position, vitesse);
+			taxis[i] = new Taxi(referentielTemps, this, position, vitesse);
 		}
 
-		this.dt = dt;
 		this.nbClients = 0;
 		this.nbClientsPerdus = 0;
 	}
@@ -45,7 +47,7 @@ public class CentraleTaxis {
 			if (client.estEnAttenteTaxi()) {
 				for (Taxi taxi : taxis) {
 					if (taxi.estDisponible(client)) {
-						distance = taxi.getDistance(client);
+						distance = taxi.getDistanceCarre(client);
 
 						if (distance < distanceMin) {
 							distanceMin = distance;
