@@ -113,10 +113,11 @@ public class Fenetre extends JFrame
 	}
 	
 	/**
-	 * Modifie le temps actuel de affichageTemps s'il existe
+	 * Modifie le temps actuel et le nombre de taxis de affichageInfos s'il existe
 	 * @param tempsActuel le temps actuel
+	 * @param nbTaxis le nombre de taxis
 	 */
-	public void setTemps(int tempsActuel, int nbTaxis)
+	public void setInfos(int tempsActuel, int nbTaxis)
 	{
 		if(affichageInfos != null)
 		{
