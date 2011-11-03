@@ -56,13 +56,13 @@ public class Test implements ActionListener
 		listeClients.add(new Point2D.Double(1000, 0));
 		listeClients.add(new Point2D.Double(0, 1000));
 		
-		for(int i=0; i<10; i++)
+		for(int i=0; i<100; i++)
         {
 			if(stop)
 				break;
 			if(play)
 			{
-				fenetre.setTemps(i, 10);
+				fenetre.setInfos(i, 10);
 	    		fenetre.setAffichageVille(listeTaxis, listeClients);
 	    		
 	    		listeTaxis[0].x += 10;

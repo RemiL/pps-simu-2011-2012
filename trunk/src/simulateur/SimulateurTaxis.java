@@ -1,48 +1,97 @@
 package simulateur;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class SimulateurTaxis {
+import presentation.Fenetre;
 
+public class SimulateurTaxis implements ActionListener {
+
+	private CentraleTaxis centrale;
 	private double dureeSimulation;
 	private int nbEchantillons;
 	private ReferentielTemps referentielTemps;
 
 	private CentraleTaxis centrale;
+	private int nbTaxis;
+	private double pourcentageSatisfaits;
+	private Point2D.Double positionCentrale;
+	private double vitesse;
+	private int rayonVille;
 	private GenerateurApparitionClient genApparitionClient;
 	private GenerateurPositionDepart genPositionDepart;
 	private GenerateurPositionArrivee genPositionArrivee;
 	private GenerateurTempsAttente genTempsAttente;
+	private HashMap<String, String> parametres;
+	
+	private Fenetre fenetre;
+	private boolean play;
+	private boolean stop;
+	private Thread t;
+	private int typeSimulation;
 
 	public SimulateurTaxis() {
+		fenetre = new Fenetre();
+		fenetre.getBoutonSimuler().addActionListener(this);
+		fenetre.getBoutonStop().addActionListener(this);
+		fenetre.getBoutonPausePlay().addActionListener(this);
+		play = true;
+		stop = false;
+	}
+	
+	public void configurer()
+	{
+		String[] labels1 = { "Nombre d'échantillons", "Durée de la simulation", "Rayon de la ville", "Position x de la centrale", "Position y de la centrale", "Vitesse des taxis", "Lambda poisson", "Rayon d'exclusion de l'arrivée", "Temps d'attente moyen", "Ecart type du temps d'attente", "Pourcentage de clients satisfaits" };
+	    int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+	    String[] labels2 = { "Nombre d'échantillons", "Durée de la simulation", "Rayon de la ville", "Position x de la centrale", "Position y de la centrale", "Vitesse des taxis", "Lambda poisson", "Rayon d'exclusion de l'arrivée", "Temps d'attente moyen", "Ecart type du temps d'attente", "Nombre de taxis" };
+	    int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+		fenetre.initAffichageInit(labels1, widths1, labels2, widths2);
 	}
 
-	public void simuler(double dureeSimulation, int nbEchantillons, int nbTaxis, Point2D.Double position,
-			double vitesse, GenerateurApparitionClient genApparitionClient, GenerateurPositionDepart genPositionDepart,
-			GenerateurPositionArrivee genPositionArrivee, GenerateurTempsAttente genTempsAttente) {
-		this.nbEchantillons = nbEchantillons;
-		this.dureeSimulation = dureeSimulation;
-		this.referentielTemps = new ReferentielTemps(dureeSimulation / nbEchantillons);
-
-		this.genApparitionClient = genApparitionClient;
-		this.genPositionArrivee = genPositionArrivee;
-		this.genPositionDepart = genPositionDepart;
-		this.genTempsAttente = genTempsAttente;
-
-		centrale = new CentraleTaxis(referentielTemps, nbTaxis, position, vitesse);
-
+	public void simuler() {
+		centrale = new CentraleTaxis(nbTaxis, positionCentrale, vitesse, dt);
+		fenetre.initAffichageVille(nbTaxis, rayonVille);
+		
 		// On effectue la boucle n+1 fois puisque la première itération sert
 		// à l'initialisation, les taxis effectueront donc bien n mouvements.
 		for (int i = 0; i <= nbEchantillons; i++) {
-			// On affecte les clients en attente aux taxis disponibles,
-			centrale.affecterTaxis();
-			// on calcule le déplacement des taxis pendant l'intervalle dt
-			centrale.deplacerTaxis();
-			// puis on génère l'apparition d'éventuels nouveaux clients.
-			simulerApparitionClients();
+			if(stop)
+				break;
+			if(play)
+			{
+				//TODO avoir la liste des positions des clients et taxis pour set l'affichage avec fenetre.setInfos et fenetre.setAffichageVille
+				Point2D.Double[] listeTaxis = new Point2D.Double[nbTaxis];
+				ArrayList<Point2D.Double> listeClients = new ArrayList<Point2D.Double>();
+				
+				// On met à jour l'horloge, on décide de ne pas utiliser
+				// l'incrémentation pour limiter le bruit numérique.
+				Horloge.setTemps(i * dt);
+				// On affecte les clients en attente aux taxis disponibles,
+				centrale.affecterTaxis();
+				// on calcule le déplacement des taxis pendant l'intervalle dt
+				centrale.deplacerTaxis();
+				// puis on génère l'apparition d'éventuels nouveaux clients.
+				simulerApparitionClients();
+				
+				fenetre.setInfos(i, nbTaxis);
+	    		fenetre.setAffichageVille(listeTaxis, listeClients);
+			}
+			else
+				i--;
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			// On incrémente l'horloge.
 			referentielTemps.incrementerTemps();
 		}
+		
+		fenetre.changeBoutonPausePlay(play, true);
+		fenetre.afficherResultat(parametres, typeSimulation, pourcentageSatisfaits);
 	}
 
 	private void simulerApparitionClients() {
@@ -60,7 +109,51 @@ public class SimulateurTaxis {
 		}
 	}
 
-	public static void main(String[] args) {
-
+	public static void main(String[] args)
+	{
+		SimulateurTaxis simulateur = new SimulateurTaxis();
+		simulateur.configurer();
+	}
+	
+	public void actionPerformed(ActionEvent arg0)
+	{
+		if(arg0.getSource() == fenetre.getBoutonSimuler())
+		{
+			this.parametres = fenetre.getValues();
+			typeSimulation = fenetre.getSimulationType();
+			
+			this.rayonVille = Integer.parseInt(parametres.get("Rayon de la ville"));
+			this.nbEchantillons = Integer.parseInt(parametres.get("Nombre d'échantillons"));
+			this.dureeSimulation = Double.parseDouble(parametres.get("Durée de la simulation"));
+			this.dt = dureeSimulation / nbEchantillons;
+			this.vitesse = Double.parseDouble(parametres.get("Vitesse des taxis"));
+			this.positionCentrale = new Point2D.Double(Double.parseDouble(parametres.get("Position x de la centrale")), Double.parseDouble(parametres.get("Position y de la centrale")));
+			this.genApparitionClient = new GenApparitionClientPoisson(Double.parseDouble(parametres.get("Lambda poisson")));
+			this.genPositionArrivee = new GenPositionArrivee(rayonVille, Double.parseDouble(parametres.get("Rayon d'exclusion de l'arrivée")));
+			this.genPositionDepart = new GenPositionDepart(rayonVille);
+			this.genTempsAttente = new GenTempsAttenteGaussien(Double.parseDouble(parametres.get("Temps d'attente moyen")), Double.parseDouble(parametres.get("Ecart type du temps d'attente")));
+			
+			t = new Thread(new PlaySimulation());
+            t.start();
+		}
+		else if(arg0.getSource() == fenetre.getBoutonStop())
+		{
+			stop = true;
+			fenetre.changeBoutonPausePlay(play, stop);
+		}
+		else if(arg0.getSource() == fenetre.getBoutonPausePlay())
+		{
+			play = !play;
+			fenetre.changeBoutonPausePlay(play, stop);
+		}
+	}
+	
+	class PlaySimulation implements Runnable
+	{
+		@Override
+		public void run() 
+		{
+			simuler();
+		}
 	}
 }
