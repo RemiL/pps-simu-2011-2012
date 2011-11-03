@@ -2,7 +2,7 @@ package simulateur;
 
 public class ReferentielTemps {
 
-	private double dt;
+	private final double dt;
 	private int tick;
 	private double temps;
 

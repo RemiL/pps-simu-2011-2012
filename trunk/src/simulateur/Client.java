@@ -40,6 +40,10 @@ public class Client {
 		etat = Etat.PRIS_EN_CHARGE;
 	}
 
+	public boolean estPrisEnCharge() {
+		return etat == Etat.PRIS_EN_CHARGE;
+	}
+
 	public Point2D.Double getDepart() {
 		return depart;
 	}
