@@ -10,7 +10,6 @@ import presentation.Fenetre;
 
 public class SimulateurTaxis implements ActionListener {
 
-	private CentraleTaxis centrale;
 	private double dureeSimulation;
 	private int nbEchantillons;
 	private ReferentielTemps referentielTemps;
@@ -52,7 +51,8 @@ public class SimulateurTaxis implements ActionListener {
 	}
 
 	public void simuler() {
-		centrale = new CentraleTaxis(nbTaxis, positionCentrale, vitesse, dt);
+		centrale = new CentraleTaxis(referentielTemps, nbTaxis, positionCentrale, vitesse);
+		
 		fenetre.initAffichageVille(nbTaxis, rayonVille);
 		
 		// On effectue la boucle n+1 fois puisque la première itération sert
@@ -66,9 +66,6 @@ public class SimulateurTaxis implements ActionListener {
 				Point2D.Double[] listeTaxis = new Point2D.Double[nbTaxis];
 				ArrayList<Point2D.Double> listeClients = new ArrayList<Point2D.Double>();
 				
-				// On met à jour l'horloge, on décide de ne pas utiliser
-				// l'incrémentation pour limiter le bruit numérique.
-				Horloge.setTemps(i * dt);
 				// On affecte les clients en attente aux taxis disponibles,
 				centrale.affecterTaxis();
 				// on calcule le déplacement des taxis pendant l'intervalle dt
@@ -125,7 +122,6 @@ public class SimulateurTaxis implements ActionListener {
 			this.rayonVille = Integer.parseInt(parametres.get("Rayon de la ville"));
 			this.nbEchantillons = Integer.parseInt(parametres.get("Nombre d'échantillons"));
 			this.dureeSimulation = Double.parseDouble(parametres.get("Durée de la simulation"));
-			this.dt = dureeSimulation / nbEchantillons;
 			this.vitesse = Double.parseDouble(parametres.get("Vitesse des taxis"));
 			this.positionCentrale = new Point2D.Double(Double.parseDouble(parametres.get("Position x de la centrale")), Double.parseDouble(parametres.get("Position y de la centrale")));
 			this.genApparitionClient = new GenApparitionClientPoisson(Double.parseDouble(parametres.get("Lambda poisson")));
