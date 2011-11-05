@@ -40,8 +40,8 @@ public class SimulateurTaxis implements ActionListener {
 		fenetre.getBoutonStop().addActionListener(this);
 		fenetre.getBoutonPausePlay().addActionListener(this);
 		fenetre.getBoutonResultat().addActionListener(this);
-		play = true;
-		stop = false;
+		fenetre.getBoutonNouvelleSimulation().addActionListener(this);
+		fenetre.getBoutonResimuler().addActionListener(this);
 	}
 
 	public void configurer() {
@@ -56,7 +56,7 @@ public class SimulateurTaxis implements ActionListener {
 				"Pourcentage de clients satisfaits", "Nombre de répétitions",
 				"Accélération de l'animation (0 pour aucune animation)" };
 		String[] defaults1 = { "10000", "2", "10", "0", "0", "45", "10", "1",
-				"1", "20", "10", "80", "1" };
+				"20", "10", "80", "1", "100" };
 		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 		String[] labels2 = { "Nombre d'échantillons",
 				"Durée de la simulation (h)", "Rayon de la ville (km)",
@@ -70,19 +70,24 @@ public class SimulateurTaxis implements ActionListener {
 				"Accélération de l'animation (0 pour aucune animation)" };
 		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 		String[] defaults2 = { "10000", "2", "10", "0", "0", "45", "10", "1",
-				"20", "10", "2", "1", "1" };
+				"20", "10", "2", "1", "100" };
 		fenetre.initAffichageInit(labels1, defaults1, widths1, labels2,
 				defaults2, widths2);
 	}
 
 	public void simuler() {
+		resultat = 0;
+		stop = false;
+		play = true;
+		fenetre.changeBoutonPausePlay(play, stop);
+		
 		// On fait la simulation en fonction de son type
 		if (typeSimulation == 0) {
 
 		} else {
 			// On réalise un certain nombre de fois la simulation pour avoir
 			// une moyenne
-			for (int rep = 0; rep < nbRepetitions; rep++) {
+			for (int rep = 0; rep < nbRepetitions && !stop; rep++) {
 				centrale = new CentraleTaxis(referentielTemps, nbTaxis,
 						positionCentrale, vitesse);
 				fenetre.initAffichageVille(nbTaxis, rayonVille);
@@ -112,8 +117,10 @@ public class SimulateurTaxis implements ActionListener {
 						i--;
 					}
 					try {
-						// Le temps d'attente entre chaque rafraîchissement de l'animation
-						Thread.sleep((long) (referentielTemps.getDt() * 1000 / accelerationAnimation));
+						// Le temps d'attente entre chaque rafraîchissement de
+						// l'animation
+						Thread
+								.sleep((long) (referentielTemps.getDt() * 1000 / accelerationAnimation));
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -212,11 +219,16 @@ public class SimulateurTaxis implements ActionListener {
 			fenetre.changeBoutonPausePlay(play, stop);
 		} else if (arg0.getSource() == fenetre.getBoutonResultat()) {
 			fenetre.afficherResultat(parametres, typeSimulation, resultat);
+		} else if (arg0.getSource() == fenetre.getBoutonNouvelleSimulation()) {
+			this.configurer();
+		} else if (arg0.getSource() == fenetre.getBoutonResimuler()) {
+			t.interrupt();
+			t = new Thread(new PlaySimulation());
+			t.start();
 		}
 	}
 
 	class PlaySimulation implements Runnable {
-		@Override
 		public void run() {
 			simuler();
 		}
