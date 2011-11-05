@@ -193,4 +193,8 @@ public class Taxi {
 			}
 		}
 	}
+
+	public Point2D getPosition() {
+		return position;
+	}
 }

@@ -3,7 +3,6 @@ package simulateur;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import presentation.Fenetre;
@@ -14,9 +13,10 @@ public class SimulateurTaxis implements ActionListener {
 	private int nbEchantillons;
 	private ReferentielTemps referentielTemps;
 
-	private CentraleTaxis centrale;
 	private int nbTaxis;
-	private double pourcentageSatisfaits;
+	private double pourcentageClientsSatisfaits;
+
+	private CentraleTaxis centrale;
 	private Point2D.Double positionCentrale;
 	private double vitesse;
 	private int rayonVille;
@@ -25,7 +25,7 @@ public class SimulateurTaxis implements ActionListener {
 	private GenerateurPositionArrivee genPositionArrivee;
 	private GenerateurTempsAttente genTempsAttente;
 	private HashMap<String, String> parametres;
-	
+
 	private Fenetre fenetre;
 	private boolean play;
 	private boolean stop;
@@ -40,55 +40,54 @@ public class SimulateurTaxis implements ActionListener {
 		play = true;
 		stop = false;
 	}
-	
-	public void configurer()
-	{
-		String[] labels1 = { "Nombre d'échantillons", "Durée de la simulation", "Rayon de la ville", "Position x de la centrale", "Position y de la centrale", "Vitesse des taxis", "Lambda poisson", "Rayon d'exclusion de l'arrivée", "Temps d'attente moyen", "Ecart type du temps d'attente", "Pourcentage de clients satisfaits" };
-	    int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-	    String[] labels2 = { "Nombre d'échantillons", "Durée de la simulation", "Rayon de la ville", "Position x de la centrale", "Position y de la centrale", "Vitesse des taxis", "Lambda poisson", "Rayon d'exclusion de l'arrivée", "Temps d'attente moyen", "Ecart type du temps d'attente", "Nombre de taxis" };
-	    int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+
+	public void configurer() {
+		String[] labels1 = { "Nombre d'échantillons", "Durée de la simulation (h)", "Rayon de la ville (km)",
+				"Position x de la centrale (km)", "Position y de la centrale (km)", "Vitesse des taxis (km/h)",
+				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)", "Temps d'attente moyen (min)",
+				"Ecart type du temps d'attente (min)", "Pourcentage de clients satisfaits" };
+		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+		String[] labels2 = { "Nombre d'échantillons", "Durée de la simulation (h)", "Rayon de la ville (km)",
+				"Position x de la centrale (km)", "Position y de la centrale (km)", "Vitesse des taxis (km/h)",
+				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)", "Temps d'attente moyen (min)",
+				"Ecart type du temps d'attente (min)", "Nombre de taxis" };
+		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 		fenetre.initAffichageInit(labels1, widths1, labels2, widths2);
 	}
 
 	public void simuler() {
 		centrale = new CentraleTaxis(referentielTemps, nbTaxis, positionCentrale, vitesse);
-		
+
 		fenetre.initAffichageVille(nbTaxis, rayonVille);
-		
+
 		// On effectue la boucle n+1 fois puisque la première itération sert
 		// à l'initialisation, les taxis effectueront donc bien n mouvements.
-		for (int i = 0; i <= nbEchantillons; i++) {
-			if(stop)
-				break;
-			if(play)
-			{
-				//TODO avoir la liste des positions des clients et taxis pour set l'affichage avec fenetre.setInfos et fenetre.setAffichageVille
-				Point2D.Double[] listeTaxis = new Point2D.Double[nbTaxis];
-				ArrayList<Point2D.Double> listeClients = new ArrayList<Point2D.Double>();
-				
+		for (int i = 0; i <= nbEchantillons && !stop; i++) {
+			if (play) {
 				// On affecte les clients en attente aux taxis disponibles,
 				centrale.affecterTaxis();
 				// on calcule le déplacement des taxis pendant l'intervalle dt
 				centrale.deplacerTaxis();
 				// puis on génère l'apparition d'éventuels nouveaux clients.
 				simulerApparitionClients();
-				
+				// On incrémente l'horloge.
+				referentielTemps.incrementerTemps();
+
 				fenetre.setInfos(i, nbTaxis);
-	    		fenetre.setAffichageVille(listeTaxis, listeClients);
-			}
-			else
+				fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsNonPrisEnCharge());
+			} else {
 				i--;
+			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			// On incrémente l'horloge.
-			referentielTemps.incrementerTemps();
 		}
-		
+
 		fenetre.changeBoutonPausePlay(play, true);
-		fenetre.afficherResultat(parametres, typeSimulation, pourcentageSatisfaits);
+		fenetre.afficherResultat(parametres, typeSimulation,
+				100 * (centrale.getNbClients() - centrale.getNbClientsPerdus()) / centrale.getNbClients());
 	}
 
 	private void simulerApparitionClients() {
@@ -106,49 +105,59 @@ public class SimulateurTaxis implements ActionListener {
 		}
 	}
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		SimulateurTaxis simulateur = new SimulateurTaxis();
 		simulateur.configurer();
 	}
-	
-	public void actionPerformed(ActionEvent arg0)
-	{
-		if(arg0.getSource() == fenetre.getBoutonSimuler())
-		{
+
+	public void actionPerformed(ActionEvent arg0) {
+		if (arg0.getSource() == fenetre.getBoutonSimuler()) {
 			this.parametres = fenetre.getValues();
 			typeSimulation = fenetre.getSimulationType();
-			
-			this.rayonVille = Integer.parseInt(parametres.get("Rayon de la ville"));
+
 			this.nbEchantillons = Integer.parseInt(parametres.get("Nombre d'échantillons"));
-			this.dureeSimulation = Double.parseDouble(parametres.get("Durée de la simulation"));
-			this.vitesse = Double.parseDouble(parametres.get("Vitesse des taxis"));
-			this.positionCentrale = new Point2D.Double(Double.parseDouble(parametres.get("Position x de la centrale")), Double.parseDouble(parametres.get("Position y de la centrale")));
-			this.genApparitionClient = new GenApparitionClientPoisson(Double.parseDouble(parametres.get("Lambda poisson")));
-			this.genPositionArrivee = new GenPositionArrivee(rayonVille, Double.parseDouble(parametres.get("Rayon d'exclusion de l'arrivée")));
+			this.dureeSimulation = Double.parseDouble(parametres.get("Durée de la simulation (h)")) * 3600;
+			this.referentielTemps = new ReferentielTemps(dureeSimulation / nbEchantillons);
+
+			if (typeSimulation == 0) {
+				// On cherche le nombre de taxis à utiliser pour atteindre un
+				// certain pourcentage de satisfaction des clients.
+				this.pourcentageClientsSatisfaits = Double.parseDouble(parametres
+						.get("Pourcentage de clients satisfaits"));
+			} else if (typeSimulation == 1) {
+				// On cherche le pourcentage de satisfaction des clients
+				// en connaissant le nombre de taxis.
+				this.nbTaxis = Integer.parseInt(parametres.get("Nombre de taxis"));
+			}
+
+			this.rayonVille = Integer.parseInt(parametres.get("Rayon de la ville (km)")) * 1000;
+			this.vitesse = Double.parseDouble(parametres.get("Vitesse des taxis (km/h)")) * 1000 / 3600;
+			this.positionCentrale = new Point2D.Double(Double.parseDouble(parametres
+					.get("Position x de la centrale (km)")) * 1000, Double.parseDouble(parametres
+					.get("Position y de la centrale (km)")) * 1000);
+			this.genApparitionClient = new GenApparitionClientPoisson(Double.parseDouble(parametres
+					.get("Lambda poisson (clients/h)")) / 3600 * referentielTemps.getDt());
+			this.genPositionArrivee = new GenPositionArrivee(rayonVille, Double.parseDouble(parametres
+					.get("Rayon d'exclusion de l'arrivée (km)")) * 1000);
 			this.genPositionDepart = new GenPositionDepart(rayonVille);
-			this.genTempsAttente = new GenTempsAttenteGaussien(Double.parseDouble(parametres.get("Temps d'attente moyen")), Double.parseDouble(parametres.get("Ecart type du temps d'attente")));
-			
+			this.genTempsAttente = new GenTempsAttenteGaussien(Double.parseDouble(parametres
+					.get("Temps d'attente moyen (min)")) * 60, Double.parseDouble(parametres
+					.get("Ecart type du temps d'attente (min)")) * 60);
+
 			t = new Thread(new PlaySimulation());
-            t.start();
-		}
-		else if(arg0.getSource() == fenetre.getBoutonStop())
-		{
+			t.start();
+		} else if (arg0.getSource() == fenetre.getBoutonStop()) {
 			stop = true;
 			fenetre.changeBoutonPausePlay(play, stop);
-		}
-		else if(arg0.getSource() == fenetre.getBoutonPausePlay())
-		{
+		} else if (arg0.getSource() == fenetre.getBoutonPausePlay()) {
 			play = !play;
 			fenetre.changeBoutonPausePlay(play, stop);
 		}
 	}
-	
-	class PlaySimulation implements Runnable
-	{
+
+	class PlaySimulation implements Runnable {
 		@Override
-		public void run() 
-		{
+		public void run() {
 			simuler();
 		}
 	}

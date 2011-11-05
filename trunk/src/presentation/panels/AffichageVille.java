@@ -6,10 +6,12 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JPanel;
+
+import simulateur.Client;
+import simulateur.Taxi;
 
 /**
  * Un panneau d'affichage de la ville
@@ -18,8 +20,8 @@ public class AffichageVille extends JPanel
 {
 	/** La liste des chemins des taxis */
 	private GeneralPath[] listePaths;
-	/** La liste des positions des clients */
-	private ArrayList<Point2D.Double> listeClients;
+	/** La liste des clients */
+	private LinkedList<Client> listeClients;
 	/** Le rayon de la ville */
 	private int rayonVille;
 	/** La liste des couleurs utilisés pour dessiner les chemins des taxis */
@@ -38,7 +40,7 @@ public class AffichageVille extends JPanel
 		
 		rayonVille = rayon;
 		listePaths = new GeneralPath[nbTaxis];
-		listeClients = new ArrayList<Point2D.Double>();
+		listeClients = new LinkedList<Client>();
 		tailleBasePoint = 20;
 	}
 	
@@ -77,10 +79,9 @@ public class AffichageVille extends JPanel
 		
 		// Affichage des clients. Ils sont représentés par des carrés rouges
 		g2D.setColor(Color.red);
-		for(Point2D.Double pos : listeClients)
+		for(Client c : listeClients)
 		{
-			if(pos != null)
-				g2D.fillRect((int) ((pos.getX() - tailleBasePoint / 2) * scale + this.getWidth() / 2),(int) ((pos.getY() - tailleBasePoint / 2) * scale + this.getHeight() / 2), (int)(tailleBasePoint * scale), (int)(tailleBasePoint * scale));
+			g2D.fillRect((int) ((c.getDepart().getX() - tailleBasePoint / 2) * scale + this.getWidth() / 2),(int) ((c.getDepart().getY() - tailleBasePoint / 2) * scale + this.getHeight() / 2), (int)(tailleBasePoint * scale), (int)(tailleBasePoint * scale));
 		}
 		
 		double translateX;
@@ -107,30 +108,30 @@ public class AffichageVille extends JPanel
 	
 	/**
 	 * Modifie le chemin des taxis dans la liste
-	 * @param listeTaxis la liste des positions des taxis dans le repère centré au centre du cercle
+	 * @param taxis la liste des taxis présents dans la ville
 	 */
-	public void setPosTaxis(Point2D.Double[] listeTaxis)
+	public void setPosTaxis(Taxi[] taxis)
 	{
 		// Pour chaque taxi, on complète son chemin
-		for(int i=0; i<listeTaxis.length; i++)
+		for(int i=0; i<taxis.length; i++)
 		{
 			// Si le chemin n'existe pas on en crée un nouveau sinon il est complété
 			if(listePaths[i] == null)
 			{
 				listePaths[i] = new GeneralPath();
-				listePaths[i].moveTo(listeTaxis[i].getX(), listeTaxis[i].getY());
+				listePaths[i].moveTo(taxis[i].getPosition().getX(), taxis[i].getPosition().getY());
 			}
 			else
-				listePaths[i].lineTo(listeTaxis[i].getX(), listeTaxis[i].getY());
+				listePaths[i].lineTo(taxis[i].getPosition().getX(), taxis[i].getPosition().getY());
 		}
 	}
 	
 	/**
 	 * Modifie la liste des positions des clients
-	 * @param liste la liste des positions des clients dans le repère centré au centre du cercle
+	 * @param clients la liste des clients non pris en charge dans la ville
 	 */
-	public void setPosClients(ArrayList<Point2D.Double> liste)
+	public void setPosClients(LinkedList<Client> clients)
 	{
-		listeClients = liste;
+		listeClients = clients;
 	}
 }
