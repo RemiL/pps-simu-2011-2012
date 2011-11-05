@@ -25,7 +25,7 @@ public class Client {
 	}
 
 	public void majEtat() {
-		if (estEnAttenteTaxi() && horaireAbandon < referentielTemps.getTemps()) {
+		if (etat == Etat.ATTENTE_TAXI && horaireAbandon < referentielTemps.getTemps()) {
 			etat = Etat.ABANDON;
 		}
 	}
