@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,6 +36,10 @@ public class Fenetre extends JFrame {
 	private JButton boutonStop;
 	/** Le bouton pour reprendre/mettre en pause la simulation */
 	private JButton boutonPausePlay;
+	/** Le bouton pour voir le résultat */
+	private JButton boutonResultat;
+	/** Le panel pour les boutons en bas */
+	private JPanel panBas;
 
 	/**
 	 * Construit une nouvelle fenêtre de taille 700x700
@@ -50,6 +55,7 @@ public class Fenetre extends JFrame {
 		boutonStop = new JButton("Stop");
 		boutonSimuler = new JButton("Simuler");
 		boutonPausePlay = new JButton("Pause");
+		boutonResultat = new JButton("Résultat");
 	}
 
 	/**
@@ -83,6 +89,7 @@ public class Fenetre extends JFrame {
 
 		this.add(pan, BorderLayout.SOUTH);
 		affichageInit.revalidate();
+		this.repaint();
 	}
 
 	/**
@@ -103,13 +110,14 @@ public class Fenetre extends JFrame {
 		this.getContentPane().add(affichageVille, BorderLayout.CENTER);
 		this.add(affichageInfos, BorderLayout.NORTH);
 
-		JPanel pan = new JPanel();
-		pan.add(boutonPausePlay);
-		pan.add(boutonStop);
+		panBas = new JPanel();
+		panBas.add(boutonPausePlay);
+		panBas.add(boutonStop);
 
-		this.add(pan, BorderLayout.SOUTH);
+		this.add(panBas, BorderLayout.SOUTH);
 		affichageVille.revalidate();
 		affichageInfos.revalidate();
+		this.repaint();
 	}
 
 	public void afficherResultat(HashMap<String, String> parametres,
@@ -117,8 +125,9 @@ public class Fenetre extends JFrame {
 		this.getContentPane().removeAll();
 		AffichageResultat pan = new AffichageResultat(parametres,
 				typeSimulation, resultat);
-		this.add(pan, BorderLayout.CENTER);
+		this.add(pan, BorderLayout.NORTH);
 		pan.revalidate();
+		this.repaint();
 	}
 
 	/**
@@ -182,6 +191,15 @@ public class Fenetre extends JFrame {
 	public JButton getBoutonPausePlay() {
 		return boutonPausePlay;
 	}
+	
+	/**
+	 * Return l'instance du bouton pour afficher le résultat
+	 * 
+	 * @return l'instance du bouton pour afficher le résultat
+	 */
+	public AbstractButton getBoutonResultat() {
+		return boutonResultat;
+	}
 
 	/**
 	 * Change l'état des bouton play/pause et stop
@@ -231,5 +249,17 @@ public class Fenetre extends JFrame {
 			return affichageInit.getSelectedIndex();
 		else
 			return -1;
+	}
+
+	/**
+	 * Met fin à la simulation
+	 * Les boutons play/pause et stop ne sont plus utilisables
+	 * Le bouton "Résultat" s'affiche pour accéder au résultat 
+	 */
+	public void finaliserSimulation() {
+		panBas.removeAll();
+		panBas.add(boutonResultat);
+		panBas.revalidate();
+		panBas.repaint();
 	}
 }
