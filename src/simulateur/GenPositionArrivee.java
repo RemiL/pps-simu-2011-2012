@@ -21,7 +21,8 @@ public class GenPositionArrivee implements GenerateurPositionArrivee {
 			arrivee.x = GenerateurAleatoireUniforme.genererDouble(-rayon, rayon);
 			arrivee.y = GenerateurAleatoireUniforme.genererDouble(-rayon, rayon);
 
-		} while ((arrivee.distanceSq(0, 0) <= rayon * rayon) && (arrivee.distanceSq(pointDepart) < distanceMin*distanceMin));
+		} while ((arrivee.distanceSq(0, 0) > rayon * rayon)
+				&& (arrivee.distanceSq(pointDepart) < distanceMin * distanceMin));
 
 		return arrivee;
 	}
