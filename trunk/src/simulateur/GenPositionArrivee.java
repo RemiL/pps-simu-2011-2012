@@ -15,14 +15,13 @@ public class GenPositionArrivee implements GenerateurPositionArrivee {
 	}
 
 	public Point2D.Double genererPositionArrivee(Point2D.Double pointDepart) {
-
 		Point2D.Double arrivee = new Point2D.Double();
+
 		do {
 			arrivee.x = GenerateurAleatoireUniforme.genererDouble(-rayon, rayon);
 			arrivee.y = GenerateurAleatoireUniforme.genererDouble(-rayon, rayon);
-
 		} while ((arrivee.distanceSq(0, 0) > rayon * rayon)
-				&& (arrivee.distanceSq(pointDepart) < distanceMin * distanceMin));
+				|| (arrivee.distanceSq(pointDepart) < distanceMin * distanceMin));
 
 		return arrivee;
 	}

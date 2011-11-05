@@ -10,16 +10,14 @@ public class GenPositionDepart implements GenerateurPositionDepart {
 
 	public GenPositionDepart(double rayon) {
 		this.rayon = rayon;
-
 	}
 
 	public Point2D.Double genererPositionDepart() {
-
 		Point2D.Double depart = new Point2D.Double();
+
 		do {
 			depart.x = GenerateurAleatoireUniforme.genererDouble(-rayon, rayon);
 			depart.y = GenerateurAleatoireUniforme.genererDouble(-rayon, rayon);
-
 		} while (depart.distanceSq(0, 0) > rayon * rayon);
 
 		return depart;
