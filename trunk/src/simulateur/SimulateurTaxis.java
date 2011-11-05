@@ -77,12 +77,17 @@ public class SimulateurTaxis implements ActionListener {
 
 				fenetre.setInfos(i, nbTaxis);
 				
+				for(Client c : centrale.getClientsNonPrisEnCharge())
+				{
+					System.out.println(c.getDepart() + "  /  " + c.getArrivee());
+				}
+				
 				fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsNonPrisEnCharge());
 			} else {
 				i--;
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

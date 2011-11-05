@@ -46,7 +46,7 @@ public class AffichageVille extends JPanel {
 		rayonVille = rayon;
 		listePaths = new GeneralPath[nbTaxis];
 		listeClients = new LinkedList<Client>();
-		tailleBasePoint = 200;
+		tailleBasePoint = 6;
 	}
 
 	/**
@@ -85,9 +85,9 @@ public class AffichageVille extends JPanel {
 		// Affichage des clients. Ils sont représentés par des carrés rouges
 		g2D.setColor(Color.red);
 		for (Client c : listeClients) {
-			g2D.fillRect((int) ((c.getDepart().getX() - tailleBasePoint / 2) * scale + this.getWidth() / 2), (int) ((c
-					.getDepart().getY() - tailleBasePoint / 2) * scale + this.getHeight() / 2),
-					(int) (tailleBasePoint * scale), (int) (tailleBasePoint * scale));
+			g2D.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2), (int) ((c
+					.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
+					(int) tailleBasePoint, (int) tailleBasePoint);
 		}
 
 		double translateX;
@@ -108,9 +108,9 @@ public class AffichageVille extends JPanel {
 				// bout un point représentant la position actuelle du taxi
 				g2D.setColor(listeColors[i % 8]);
 				g2D.draw(path);
-				g2D.fillOval((int) (path.getCurrentPoint().getX() - (tailleBasePoint / 2) * scale), (int) (path
-						.getCurrentPoint().getY() - (tailleBasePoint / 2) * scale), (int) (tailleBasePoint * scale),
-						(int) (tailleBasePoint * scale));
+				g2D.fillOval((int) (path.getCurrentPoint().getX() - (tailleBasePoint / 2)), (int) (path
+						.getCurrentPoint().getY() - (tailleBasePoint / 2)), (int) tailleBasePoint,
+						(int) tailleBasePoint);
 			}
 		}
 	}
