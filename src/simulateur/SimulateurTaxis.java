@@ -37,6 +37,7 @@ public class SimulateurTaxis implements ActionListener {
 		fenetre.getBoutonSimuler().addActionListener(this);
 		fenetre.getBoutonStop().addActionListener(this);
 		fenetre.getBoutonPausePlay().addActionListener(this);
+		fenetre.getBoutonResultat().addActionListener(this);
 		play = true;
 		stop = false;
 	}
@@ -76,26 +77,18 @@ public class SimulateurTaxis implements ActionListener {
 				referentielTemps.incrementerTemps();
 
 				fenetre.setInfos(i, nbTaxis);
-				
-				for(Client c : centrale.getClientsNonPrisEnCharge())
-				{
-					System.out.println(c.getDepart() + "  /  " + c.getArrivee());
-				}
-				
 				fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsNonPrisEnCharge());
 			} else {
 				i--;
 			}
 			try {
-				Thread.sleep(50);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 
-		fenetre.changeBoutonPausePlay(play, true);
-		fenetre.afficherResultat(parametres, typeSimulation,
-				100 * (centrale.getNbClients() - centrale.getNbClientsPerdus()) / centrale.getNbClients());
+		fenetre.finaliserSimulation();
 	}
 
 	private void simulerApparitionClients() {
@@ -160,6 +153,9 @@ public class SimulateurTaxis implements ActionListener {
 		} else if (arg0.getSource() == fenetre.getBoutonPausePlay()) {
 			play = !play;
 			fenetre.changeBoutonPausePlay(play, stop);
+		} else if (arg0.getSource() == fenetre.getBoutonResultat()) {
+			fenetre.afficherResultat(parametres, typeSimulation,
+					100 * (centrale.getNbClients() - centrale.getNbClientsPerdus()) / centrale.getNbClients());
 		}
 	}
 
