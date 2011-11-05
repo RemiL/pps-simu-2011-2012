@@ -154,11 +154,14 @@ public class Fenetre extends JFrame {
 	 *            le temps actuel
 	 * @param nbTaxis
 	 *            le nombre de taxis
+	 * @param rep 
+	 *            la répartition actuelle partant de 0
 	 */
-	public void setInfos(int tempsActuel, int nbTaxis) {
+	public void setInfos(int tempsActuel, int nbTaxis, int rep) {
 		if (affichageInfos != null) {
 			affichageInfos.setTemps(tempsActuel);
 			affichageInfos.setNbTaxis(nbTaxis);
+			affichageInfos.setRep(rep);
 			affichageInfos.repaint();
 		}
 	}

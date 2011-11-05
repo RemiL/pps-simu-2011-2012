@@ -20,6 +20,8 @@ public class AffichageInfos extends JPanel {
 	private int temps;
 	/** Le nombre de taxis */
 	private int nbTaxis;
+	/** La répétition actuelle */
+	private int rep;
 
 	/**
 	 * Construit un affichage du temps
@@ -48,6 +50,7 @@ public class AffichageInfos extends JPanel {
 		g2D.setFont(font);
 		g2D.setColor(Color.white);
 		g2D.drawString("Temps actuel : " + temps, 10, 20);
+		g2D.drawString("Répétion : " + rep, 250, 20);
 		g2D.drawString("Nombre de taxis : " + nbTaxis, this.getWidth() - 220, 20);
 	}
 
@@ -69,5 +72,15 @@ public class AffichageInfos extends JPanel {
 	 */
 	public void setNbTaxis(int nbTaxis) {
 		this.nbTaxis = nbTaxis;
+	}
+
+	/**
+	 * Modifie la répétition actuelle (part de 1)
+	 * 
+	 * @param rep
+	 *            la répétition actuelle partant de 0
+	 */
+	public void setRep(int rep) {
+		this.rep = rep + 1;
 	}
 }
