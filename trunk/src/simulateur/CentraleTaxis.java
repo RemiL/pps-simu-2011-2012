@@ -84,4 +84,12 @@ public class CentraleTaxis {
 	public void signalerClientPerdu() {
 		nbClientsPerdus++;
 	}
+
+	public int getNbClients() {
+		return nbClients;
+	}
+
+	public int getNbClientsPerdus() {
+		return nbClientsPerdus;
+	}
 }

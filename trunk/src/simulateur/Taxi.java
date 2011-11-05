@@ -18,8 +18,11 @@ public class Taxi {
 	private Client clientPrioritaire;
 
 	public Taxi(ReferentielTemps referentielTemps, CentraleTaxis centrale, Point2D.Double positionDepart, double vitesse) {
+		this.referentielTemps = referentielTemps;
+
 		this.centrale = centrale;
-		this.position = positionDepart;
+		this.position = new Point2D.Double();
+		this.position.setLocation(positionDepart);
 		this.vitesse = vitesse;
 		this.dX = this.dY = 0.0;
 		this.clients = new LinkedList<Client>();
@@ -65,10 +68,10 @@ public class Taxi {
 		// TODO : vérifier que l'opération est légale ?
 		clients.add(client);
 
-		// Si on est à vide ou si notre nouveau client est
-		// plus proche que notre destination actuelle, on
-		// se déroute pour aller le chercher.
-		if (clients.isEmpty() || position.distanceSq(destination) > getDistanceCarre(client)) {
+		// Si on a un seul client ou si notre nouveau client
+		// est plus proche que notre destination actuelle,
+		// on se déroute pour aller le chercher.
+		if (clients.size() == 1 || position.distanceSq(destination) > getDistanceCarre(client)) {
 			allerChercher(client);
 		}
 	}
