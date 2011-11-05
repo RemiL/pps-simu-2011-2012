@@ -2,19 +2,19 @@ package presentation;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
  
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import presentation.panels.AffichageInit;
 import presentation.panels.AffichageInfos;
 import presentation.panels.AffichageResultat;
 import presentation.panels.AffichageVille;
+import simulateur.Client;
+import simulateur.Taxi;
 
 /**
  * Une fenêtre dans laquelle s'affiche l'interface.
@@ -99,15 +99,15 @@ public class Fenetre extends JFrame
 	
 	/**
 	 * Modifie l'affichage de la ville s'il existe
-	 * @param listeTaxis la liste des positions des taxis dans le repère centré au centre du cercle
-	 * @param listeClients la liste des position des clients dans le repère centré au centre du cercle
+	 * @param taxis la liste des taxis dans la ville
+	 * @param clients la liste des clients non pris en charge dans la ville
 	 */
-	public void setAffichageVille(Point2D.Double[] listeTaxis, ArrayList<Point2D.Double> listeClients)
+	public void setAffichageVille(Taxi[] taxis, LinkedList<Client> clients)
 	{
 		if(affichageVille != null)
 		{
-			affichageVille.setPosTaxis(listeTaxis);
-			affichageVille.setPosClients(listeClients);
+			affichageVille.setPosTaxis(taxis);
+			affichageVille.setPosClients(clients);
 			affichageVille.repaint();
 		}
 	}

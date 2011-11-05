@@ -92,4 +92,12 @@ public class CentraleTaxis {
 	public int getNbClientsPerdus() {
 		return nbClientsPerdus;
 	}
+	
+	public Taxi[] getTaxis() {
+		return taxis;
+	}
+
+	public LinkedList<Client> getClientsNonPrisEnCharge() {
+		return clientsEnAttente;
+	}
 }
