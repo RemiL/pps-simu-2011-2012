@@ -38,7 +38,11 @@ public class Fenetre extends JFrame {
 	private JButton boutonPausePlay;
 	/** Le bouton pour voir le résultat */
 	private JButton boutonResultat;
-	/** Le panel pour les boutons en bas */
+	/** Le bouton pour reconfigurer une nouvelle simulation */
+	private JButton boutonNouvelleSimulation;
+	/** Le bouton pour refaire la simulation */
+	private JButton boutonResimuler;
+	/** Le panel pour les boutons en bas de l'animation */
 	private JPanel panBas;
 
 	/**
@@ -56,6 +60,8 @@ public class Fenetre extends JFrame {
 		boutonSimuler = new JButton("Simuler");
 		boutonPausePlay = new JButton("Pause");
 		boutonResultat = new JButton("Résultat");
+		boutonNouvelleSimulation = new JButton("Nouvelle simulation");
+		boutonResimuler = new JButton("Relancer");
 	}
 
 	/**
@@ -126,7 +132,13 @@ public class Fenetre extends JFrame {
 		AffichageResultat pan = new AffichageResultat(parametres,
 				typeSimulation, resultat);
 		this.add(pan, BorderLayout.NORTH);
+		
+		panBas = new JPanel();
+		panBas.add(boutonNouvelleSimulation);
+		panBas.add(boutonResimuler);
+		this.add(panBas, BorderLayout.SOUTH);
 		pan.revalidate();
+		panBas.revalidate();
 		this.repaint();
 	}
 
@@ -200,8 +212,26 @@ public class Fenetre extends JFrame {
 	 * 
 	 * @return l'instance du bouton pour afficher le résultat
 	 */
-	public AbstractButton getBoutonResultat() {
+	public JButton getBoutonResultat() {
 		return boutonResultat;
+	}
+	
+	/**
+	 * Return l'instance du bouton pour configurer une nouvelle simulation
+	 * 
+	 * @return l'instance du bouton pour configurer une nouvelle simulation
+	 */
+	public JButton getBoutonNouvelleSimulation() {
+		return boutonNouvelleSimulation;
+	}
+	
+	/**
+	 * Return l'instance du bouton pour relancer la simulation
+	 * 
+	 * @return l'instance du bouton pour relancer la simulation
+	 */
+	public JButton getBoutonResimuler() {
+		return boutonResimuler;
 	}
 
 	/**
@@ -219,6 +249,8 @@ public class Fenetre extends JFrame {
 			boutonPausePlay.setEnabled(false);
 			boutonStop.setEnabled(false);
 		} else {
+			boutonPausePlay.setEnabled(true);
+			boutonStop.setEnabled(true);
 			// Si la simulation est en cours, on peut la mettre en pause
 			// Si elle est en pause on peut la reprendre
 			if (play)
