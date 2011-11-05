@@ -12,9 +12,11 @@ public class SimulateurTaxis implements ActionListener {
 	private double dureeSimulation;
 	private int nbEchantillons;
 	private ReferentielTemps referentielTemps;
-
+	private int nbRepetitions;
 	private int nbTaxis;
 	private double pourcentageClientsSatisfaits;
+	private double resultat;
+	private double accelerationAnimation;
 
 	private CentraleTaxis centrale;
 	private Point2D.Double positionCentrale;
@@ -43,49 +45,85 @@ public class SimulateurTaxis implements ActionListener {
 	}
 
 	public void configurer() {
-		String[] labels1 = { "Nombre d'échantillons", "Durée de la simulation (h)", "Rayon de la ville (km)",
-				"Position x de la centrale (km)", "Position y de la centrale (km)", "Vitesse des taxis (km/h)",
-				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)", "Temps d'attente moyen (min)",
-				"Ecart type du temps d'attente (min)", "Pourcentage de clients satisfaits" };
-		String[] defaults1 = { "1000", "2", "10", "0", "0", "45", "10", "1", "20", "10", "80" };
-		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-		String[] labels2 = { "Nombre d'échantillons", "Durée de la simulation (h)", "Rayon de la ville (km)",
-				"Position x de la centrale (km)", "Position y de la centrale (km)", "Vitesse des taxis (km/h)",
-				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)", "Temps d'attente moyen (min)",
-				"Ecart type du temps d'attente (min)", "Nombre de taxis" };
-		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-		String[] defaults2 = { "1000", "2", "10", "0", "0", "45", "10", "1", "20", "10", "2" };
-		fenetre.initAffichageInit(labels1, defaults1, widths1, labels2, defaults2, widths2);
+		String[] labels1 = { "Nombre d'échantillons",
+				"Durée de la simulation (h)", "Rayon de la ville (km)",
+				"Position x de la centrale (km)",
+				"Position y de la centrale (km)", "Vitesse des taxis (km/h)",
+				"Lambda poisson (clients/h)",
+				"Rayon d'exclusion de l'arrivée (km)",
+				"Temps d'attente moyen (min)",
+				"Ecart type du temps d'attente (min)",
+				"Pourcentage de clients satisfaits", "Nombre de répétitions",
+				"Accélération de l'animation (0 pour aucune animation)" };
+		String[] defaults1 = { "10000", "2", "10", "0", "0", "45", "10", "1",
+				"1", "20", "10", "80", "1" };
+		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+		String[] labels2 = { "Nombre d'échantillons",
+				"Durée de la simulation (h)", "Rayon de la ville (km)",
+				"Position x de la centrale (km)",
+				"Position y de la centrale (km)", "Vitesse des taxis (km/h)",
+				"Lambda poisson (clients/h)",
+				"Rayon d'exclusion de l'arrivée (km)",
+				"Temps d'attente moyen (min)",
+				"Ecart type du temps d'attente (min)", "Nombre de taxis",
+				"Nombre de répétitions",
+				"Accélération de l'animation (0 pour aucune animation)" };
+		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+		String[] defaults2 = { "10000", "2", "10", "0", "0", "45", "10", "1",
+				"20", "10", "2", "1", "1" };
+		fenetre.initAffichageInit(labels1, defaults1, widths1, labels2,
+				defaults2, widths2);
 	}
 
 	public void simuler() {
-		centrale = new CentraleTaxis(referentielTemps, nbTaxis, positionCentrale, vitesse);
+		// On fait la simulation en fonction de son type
+		if (typeSimulation == 0) {
 
-		fenetre.initAffichageVille(nbTaxis, rayonVille);
+		} else {
+			// On réalise un certain nombre de fois la simulation pour avoir
+			// une moyenne
+			for (int rep = 0; rep < nbRepetitions; rep++) {
+				centrale = new CentraleTaxis(referentielTemps, nbTaxis,
+						positionCentrale, vitesse);
+				fenetre.initAffichageVille(nbTaxis, rayonVille);
 
-		// On effectue la boucle n+1 fois puisque la première itération sert
-		// à l'initialisation, les taxis effectueront donc bien n mouvements.
-		for (int i = 0; i <= nbEchantillons && !stop; i++) {
-			if (play) {
-				// On affecte les clients en attente aux taxis disponibles,
-				centrale.affecterTaxis();
-				// on calcule le déplacement des taxis pendant l'intervalle dt
-				centrale.deplacerTaxis();
-				// puis on génère l'apparition d'éventuels nouveaux clients.
-				simulerApparitionClients();
-				// On incrémente l'horloge.
-				referentielTemps.incrementerTemps();
+				// On effectue la boucle n+1 fois puisque la première itération
+				// sert
+				// à l'initialisation, les taxis effectueront donc bien n
+				// mouvements.
+				for (int i = 0; i <= nbEchantillons && !stop; i++) {
+					if (play) {
+						// On affecte les clients en attente aux taxis
+						// disponibles,
+						centrale.affecterTaxis();
+						// on calcule le déplacement des taxis pendant
+						// l'intervalle dt
+						centrale.deplacerTaxis();
+						// puis on génère l'apparition d'éventuels nouveaux
+						// clients.
+						simulerApparitionClients();
+						// On incrémente l'horloge.
+						referentielTemps.incrementerTemps();
 
-				fenetre.setInfos(i, nbTaxis);
-				fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsNonPrisEnCharge());
-			} else {
-				i--;
+						fenetre.setInfos(i, nbTaxis, rep);
+						fenetre.setAffichageVille(centrale.getTaxis(), centrale
+								.getClientsNonPrisEnCharge());
+					} else {
+						i--;
+					}
+					try {
+						// Le temps d'attente entre chaque rafraîchissement de l'animation
+						Thread.sleep((long) (referentielTemps.getDt() * 1000 / accelerationAnimation));
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				resultat += 100
+						* (double) (centrale.getNbClients() - centrale
+								.getNbClientsPerdus())
+						/ (double) centrale.getNbClients();
 			}
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			resultat /= (double) nbRepetitions;
 		}
 
 		fenetre.finaliserSimulation();
@@ -102,7 +140,8 @@ public class SimulateurTaxis implements ActionListener {
 			ptArrivee = genPositionArrivee.genererPositionArrivee(ptDepart);
 			tempsAttenteMax = genTempsAttente.genererTempsAttente();
 
-			centrale.ajouterClient(new Client(referentielTemps, ptDepart, ptArrivee, tempsAttenteMax));
+			centrale.ajouterClient(new Client(referentielTemps, ptDepart,
+					ptArrivee, tempsAttenteMax));
 		}
 	}
 
@@ -116,34 +155,52 @@ public class SimulateurTaxis implements ActionListener {
 			this.parametres = fenetre.getValues();
 			typeSimulation = fenetre.getSimulationType();
 
-			this.nbEchantillons = Integer.parseInt(parametres.get("Nombre d'échantillons"));
-			this.dureeSimulation = Double.parseDouble(parametres.get("Durée de la simulation (h)")) * 3600;
-			this.referentielTemps = new ReferentielTemps(dureeSimulation / nbEchantillons);
+			this.nbEchantillons = Integer.parseInt(parametres
+					.get("Nombre d'échantillons"));
+			this.dureeSimulation = Double.parseDouble(parametres
+					.get("Durée de la simulation (h)")) * 3600;
+			this.referentielTemps = new ReferentielTemps(dureeSimulation
+					/ nbEchantillons);
 
 			if (typeSimulation == 0) {
 				// On cherche le nombre de taxis à utiliser pour atteindre un
 				// certain pourcentage de satisfaction des clients.
-				this.pourcentageClientsSatisfaits = Double.parseDouble(parametres
-						.get("Pourcentage de clients satisfaits"));
+				this.pourcentageClientsSatisfaits = Double
+						.parseDouble(parametres
+								.get("Pourcentage de clients satisfaits"));
 			} else if (typeSimulation == 1) {
 				// On cherche le pourcentage de satisfaction des clients
 				// en connaissant le nombre de taxis.
-				this.nbTaxis = Integer.parseInt(parametres.get("Nombre de taxis"));
+				this.nbTaxis = Integer.parseInt(parametres
+						.get("Nombre de taxis"));
 			}
 
-			this.rayonVille = Integer.parseInt(parametres.get("Rayon de la ville (km)")) * 1000;
-			this.vitesse = Double.parseDouble(parametres.get("Vitesse des taxis (km/h)")) * 1000 / 3600;
-			this.positionCentrale = new Point2D.Double(Double.parseDouble(parametres
-					.get("Position x de la centrale (km)")) * 1000, Double.parseDouble(parametres
-					.get("Position y de la centrale (km)")) * 1000);
-			this.genApparitionClient = new GenApparitionClientPoisson(Double.parseDouble(parametres
-					.get("Lambda poisson (clients/h)")) / 3600 * referentielTemps.getDt());
-			this.genPositionArrivee = new GenPositionArrivee(rayonVille, Double.parseDouble(parametres
-					.get("Rayon d'exclusion de l'arrivée (km)")) * 1000);
+			this.accelerationAnimation = Double
+					.parseDouble(parametres
+							.get("Accélération de l'animation (0 pour aucune animation)"));
+			this.nbRepetitions = Integer.parseInt(parametres
+					.get("Nombre de répétitions"));
+			this.rayonVille = Integer.parseInt(parametres
+					.get("Rayon de la ville (km)")) * 1000;
+			this.vitesse = Double.parseDouble(parametres
+					.get("Vitesse des taxis (km/h)")) * 1000 / 3600;
+			this.positionCentrale = new Point2D.Double(Double
+					.parseDouble(parametres
+							.get("Position x de la centrale (km)")) * 1000,
+					Double.parseDouble(parametres
+							.get("Position y de la centrale (km)")) * 1000);
+			this.genApparitionClient = new GenApparitionClientPoisson(Double
+					.parseDouble(parametres.get("Lambda poisson (clients/h)"))
+					/ 3600 * referentielTemps.getDt());
+			this.genPositionArrivee = new GenPositionArrivee(rayonVille, Double
+					.parseDouble(parametres
+							.get("Rayon d'exclusion de l'arrivée (km)")) * 1000);
 			this.genPositionDepart = new GenPositionDepart(rayonVille);
-			this.genTempsAttente = new GenTempsAttenteGaussien(Double.parseDouble(parametres
-					.get("Temps d'attente moyen (min)")) * 60, Double.parseDouble(parametres
-					.get("Ecart type du temps d'attente (min)")) * 60);
+			this.genTempsAttente = new GenTempsAttenteGaussien(
+					Double.parseDouble(parametres
+							.get("Temps d'attente moyen (min)")) * 60,
+					Double.parseDouble(parametres
+							.get("Ecart type du temps d'attente (min)")) * 60);
 
 			t = new Thread(new PlaySimulation());
 			t.start();
@@ -154,8 +211,7 @@ public class SimulateurTaxis implements ActionListener {
 			play = !play;
 			fenetre.changeBoutonPausePlay(play, stop);
 		} else if (arg0.getSource() == fenetre.getBoutonResultat()) {
-			fenetre.afficherResultat(parametres, typeSimulation,
-					100 * (centrale.getNbClients() - centrale.getNbClientsPerdus()) / centrale.getNbClients());
+			fenetre.afficherResultat(parametres, typeSimulation, resultat);
 		}
 	}
 
