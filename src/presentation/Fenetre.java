@@ -52,9 +52,29 @@ public class Fenetre extends JFrame {
 		boutonPausePlay = new JButton("Pause");
 	}
 
-	public void initAffichageInit(String[] labels1, int[] widths1, String[] labels2, int[] widths2) {
+	/**
+	 * Initialise l'affichage de configuration
+	 * 
+	 * @param labels1
+	 *            les labels des champs des paramètres pour la recherche du
+	 *            nombre de taxis
+	 * @param defaults1
+	 *            les valeurs par défauts des premiers champs
+	 * @param widths1
+	 *            la tailles des premiers champs
+	 * @param labels2
+	 *            les labels des champs des paramètres pour la recherche du
+	 *            pourcentage
+	 * @param defaults2
+	 *            les valeurs par défauts des seconds champs
+	 * @param widths2
+	 *            la tailles des seconds champs
+	 */
+	public void initAffichageInit(String[] labels1, String[] defaults1,
+			int[] widths1, String[] labels2, String[] defaults2, int[] widths2) {
 		this.getContentPane().removeAll();
-		affichageInit = new AffichageInit(labels1, widths1, labels2, widths2);
+		affichageInit = new AffichageInit(labels1, defaults1, widths1, labels2,
+				defaults2, widths2);
 		this.setLayout(new BorderLayout());
 		this.getContentPane().add(affichageInit, BorderLayout.NORTH);
 
@@ -92,9 +112,11 @@ public class Fenetre extends JFrame {
 		affichageInfos.revalidate();
 	}
 
-	public void afficherResultat(HashMap<String, String> parametres, int typeSimulation, double resultat) {
+	public void afficherResultat(HashMap<String, String> parametres,
+			int typeSimulation, double resultat) {
 		this.getContentPane().removeAll();
-		AffichageResultat pan = new AffichageResultat(parametres, typeSimulation, resultat);
+		AffichageResultat pan = new AffichageResultat(parametres,
+				typeSimulation, resultat);
 		this.add(pan, BorderLayout.CENTER);
 		pan.revalidate();
 	}

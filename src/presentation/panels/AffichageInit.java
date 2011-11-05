@@ -39,8 +39,24 @@ public class AffichageInit extends JTabbedPane {
 	 * avoir pour prendre en charge un certain pourcentage de clients. Le second
 	 * pour paramétrer le calcul du pourcentage de clients pris en charge par un
 	 * certain nombre de taxis.
+	 * 
+	 * @param labels1
+	 *            les labels des champs des paramètres pour la recherche du
+	 *            nombre de taxis
+	 * @param defaults1
+	 *            les valeurs par défauts des premiers champs
+	 * @param widths1
+	 *            la tailles des premiers champs
+	 * @param labels2
+	 *            les labels des champs des paramètres pour la recherche du
+	 *            pourcentage
+	 * @param defaults2
+	 *            les valeurs par défauts des seconds champs
+	 * @param widths2
+	 *            la tailles des seconds champs
 	 */
-	public AffichageInit(String[] labels1, int[] widths1, String[] labels2, int[] widths2) {
+	public AffichageInit(String[] labels1, String[] defaults1, int[] widths1,
+			String[] labels2, String[] defaults2, int[] widths2) {
 		super();
 
 		tabNbTaxis = new JPanel(new BorderLayout());
@@ -60,6 +76,8 @@ public class AffichageInit extends JTabbedPane {
 			fields1[i] = new JTextField();
 			if (i < widths1.length)
 				fields1[i].setColumns(widths1[i]);
+			if (i < defaults1.length)
+				fields1[i].setText(defaults1[i]);
 
 			JLabel lab = new JLabel(labels1[i], JLabel.RIGHT);
 			lab.setLabelFor(fields1[i]);
@@ -83,6 +101,8 @@ public class AffichageInit extends JTabbedPane {
 			fields2[i] = new JTextField();
 			if (i < widths2.length)
 				fields2[i].setColumns(widths2[i]);
+			if (i < defaults2.length)
+				fields2[i].setText(defaults2[i]);
 
 			JLabel lab = new JLabel(labels2[i], JLabel.RIGHT);
 			lab.setLabelFor(fields2[i]);
@@ -96,7 +116,8 @@ public class AffichageInit extends JTabbedPane {
 		}
 
 		this.addTab("Chercher le nombre de taxis", tabNbTaxis);
-		this.addTab("Calculer le pourcentage de clients pris en charge", tabNbClients);
+		this.addTab("Calculer le pourcentage de clients pris en charge",
+				tabNbClients);
 	}
 
 	/**
