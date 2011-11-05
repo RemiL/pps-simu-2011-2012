@@ -76,6 +76,7 @@ public class SimulateurTaxis implements ActionListener {
 				referentielTemps.incrementerTemps();
 
 				fenetre.setInfos(i, nbTaxis);
+				
 				fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsNonPrisEnCharge());
 			} else {
 				i--;

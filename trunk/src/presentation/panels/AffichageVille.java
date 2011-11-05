@@ -46,7 +46,7 @@ public class AffichageVille extends JPanel {
 		rayonVille = rayon;
 		listePaths = new GeneralPath[nbTaxis];
 		listeClients = new LinkedList<Client>();
-		tailleBasePoint = 20;
+		tailleBasePoint = 200;
 	}
 
 	/**
