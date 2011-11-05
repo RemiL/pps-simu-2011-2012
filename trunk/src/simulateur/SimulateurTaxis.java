@@ -46,13 +46,15 @@ public class SimulateurTaxis implements ActionListener {
 				"Position x de la centrale (km)", "Position y de la centrale (km)", "Vitesse des taxis (km/h)",
 				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)", "Temps d'attente moyen (min)",
 				"Ecart type du temps d'attente (min)", "Pourcentage de clients satisfaits" };
+		String[] defaults1 = { "1000", "2", "10", "0", "0", "45", "10", "1", "20", "10", "80" };
 		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 		String[] labels2 = { "Nombre d'échantillons", "Durée de la simulation (h)", "Rayon de la ville (km)",
 				"Position x de la centrale (km)", "Position y de la centrale (km)", "Vitesse des taxis (km/h)",
 				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)", "Temps d'attente moyen (min)",
 				"Ecart type du temps d'attente (min)", "Nombre de taxis" };
 		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-		fenetre.initAffichageInit(labels1, widths1, labels2, widths2);
+		String[] defaults2 = { "1000", "2", "10", "0", "0", "45", "10", "1", "20", "10", "2" };
+		fenetre.initAffichageInit(labels1, defaults1, widths1, labels2, defaults2, widths2);
 	}
 
 	public void simuler() {
@@ -79,7 +81,7 @@ public class SimulateurTaxis implements ActionListener {
 				i--;
 			}
 			try {
-				Thread.sleep(1);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
