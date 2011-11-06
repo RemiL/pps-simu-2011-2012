@@ -47,6 +47,8 @@ public class Taxi {
 	private LinkedList<Client> clients;
 	/** Le client concerné par la destination actuelle */
 	private Client clientPrioritaire;
+	/** Le nombre de clients max */
+	private int nbClientsMax;
 
 	/**
 	 * Construit un nouveau taxi avec les caractéristiques fournies.
@@ -60,8 +62,10 @@ public class Taxi {
 	 *            ayant pour origine le centre de la ville
 	 * @param vitesse
 	 *            la vitesse du taxi
+	 * @param nbClientsMax
+	 *            le nombre de clients max
 	 */
-	public Taxi(ReferentielTemps referentielTemps, CentraleTaxis centrale, Point2D.Double positionDepart, double vitesse) {
+	public Taxi(ReferentielTemps referentielTemps, CentraleTaxis centrale, Point2D.Double positionDepart, double vitesse, int nbClientsMax) {
 		this.referentielTemps = referentielTemps;
 
 		this.centrale = centrale;
@@ -70,16 +74,17 @@ public class Taxi {
 		this.vitesse = vitesse;
 		this.dX = this.dY = 0.0;
 		this.clients = new LinkedList<Client>();
+		this.nbClientsMax = nbClientsMax;
 	}
 
 	/**
 	 * Teste si un taxi est disponible pour un client.
 	 * 
 	 * Si le taxi est vide, il est toujours considéré comme disponible pour tout
-	 * client. Au contraire, s'il est déjà affecté à deux clients, il est
+	 * client. Au contraire, s'il est déjà affecté au maximum de clients, il est
 	 * toujours considéré comme non disponible quelque soit le client. Dans le
 	 * cas où le taxi est affecté à un client, il est considéré comme disponible
-	 * pour un deuxième client uniquement si les points de départ et d'arrivée
+	 * pour un nème client uniquement si les points de départ et d'arrivée
 	 * du nouveau client sont compris dans une bande semie-infinie autour de la
 	 * trajectoire de la course courante, de largueur égale à un tiers de la
 	 * distance restant à parcourir pour la course actualle.
@@ -92,7 +97,7 @@ public class Taxi {
 	 *         faux sinon
 	 */
 	public boolean estDisponible(Client client) {
-		boolean estDispo = clients.size() < 2;
+		boolean estDispo = clients.size() < nbClientsMax;
 
 		// Si le taxi transporte déjà un client, on accepte de prendre
 		// un nouveau passager uniquement si cela n'implique pas trop
