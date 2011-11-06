@@ -6,6 +6,14 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 
 import presentation.Fenetre;
+import simulateur.generateurs.implementations.GenApparitionsClientsPoisson;
+import simulateur.generateurs.implementations.GenPositionsArrivee;
+import simulateur.generateurs.implementations.GenPositionsDepart;
+import simulateur.generateurs.implementations.GenTempsAttenteGaussien;
+import simulateur.generateurs.interfaces.GenerateurApparitionsClients;
+import simulateur.generateurs.interfaces.GenerateurPositionsArrivee;
+import simulateur.generateurs.interfaces.GenerateurPositionsDepart;
+import simulateur.generateurs.interfaces.GenerateurTempsAttente;
 
 public class SimulateurTaxis implements ActionListener {
 
@@ -23,9 +31,9 @@ public class SimulateurTaxis implements ActionListener {
 	private Point2D.Double positionCentrale;
 	private double vitesse;
 	private int rayonVille;
-	private GenerateurApparitionClient genApparitionClient;
-	private GenerateurPositionDepart genPositionDepart;
-	private GenerateurPositionArrivee genPositionArrivee;
+	private GenerateurApparitionsClients genApparitionClient;
+	private GenerateurPositionsDepart genPositionDepart;
+	private GenerateurPositionsArrivee genPositionArrivee;
 	private GenerateurTempsAttente genTempsAttente;
 	private HashMap<String, String> parametres;
 
@@ -123,7 +131,7 @@ public class SimulateurTaxis implements ActionListener {
 	}
 
 	private void simulerApparitionClients() {
-		int nbClients = genApparitionClient.genererNombreApparitionClient();
+		int nbClients = genApparitionClient.genererNombreApparitionsClients();
 		Point2D.Double ptDepart;
 		Point2D.Double ptArrivee;
 		double tempsAttenteMax;
@@ -170,11 +178,11 @@ public class SimulateurTaxis implements ActionListener {
 			this.positionCentrale = new Point2D.Double(Double.parseDouble(parametres
 					.get("Position x de la centrale (km)")) * 1000, Double.parseDouble(parametres
 					.get("Position y de la centrale (km)")) * 1000);
-			this.genApparitionClient = new GenApparitionClientPoisson(Double.parseDouble(parametres
+			this.genApparitionClient = new GenApparitionsClientsPoisson(Double.parseDouble(parametres
 					.get("Lambda poisson (clients/h)")) / 3600 * referentielTemps.getDt());
-			this.genPositionArrivee = new GenPositionArrivee(rayonVille, Double.parseDouble(parametres
+			this.genPositionArrivee = new GenPositionsArrivee(rayonVille, Double.parseDouble(parametres
 					.get("Rayon d'exclusion de l'arrivée (km)")) * 1000);
-			this.genPositionDepart = new GenPositionDepart(rayonVille);
+			this.genPositionDepart = new GenPositionsDepart(rayonVille);
 			this.genTempsAttente = new GenTempsAttenteGaussien(Double.parseDouble(parametres
 					.get("Temps d'attente moyen (min)")) * 60, Double.parseDouble(parametres
 					.get("Ecart type du temps d'attente (min)")) * 60);
