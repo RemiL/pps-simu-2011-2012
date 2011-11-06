@@ -5,10 +5,11 @@ import java.awt.geom.Point2D;
 /**
  * Classe représentant un client de la société de taxi.
  * 
- * Un client est caractérisé par son état (attente d'un taxi, pris en charge par
- * un taxi ou abandon) et par son point de départ et sa destination. S'il n'a
- * pas été pris en charge par un taxi au bout d'un certain temps, un client peut
- * se lasser et abandonner l'idée d'attendre un taxi.
+ * Un client est caractérisé par son état (attente de l'envoi ou de l'arrivée
+ * d'un taxi, pris en charge par un taxi ou abandon) et par son point de départ
+ * et sa destination. S'il n'a pas été pris en charge par un taxi au bout d'un
+ * certain temps, un client peut se lasser et abandonner l'idée d'attendre un
+ * taxi.
  */
 public class Client {
 	/**
@@ -31,7 +32,7 @@ public class Client {
 	 * Enumération décrivant les états possibles du client.
 	 */
 	public enum Etat {
-		ATTENTE_TAXI, PRIS_EN_CHARGE, ABANDON
+		ATTENTE_ENVOI_TAXI, ATTENTE_ARRIVEE_TAXI, PRIS_EN_CHARGE, ABANDON
 	};
 
 	/** Etat courant du client */
@@ -58,7 +59,7 @@ public class Client {
 		this.depart = depart;
 		this.arrivee = arrivee;
 		this.horaireAbandon = referentielTemps.getTemps() + tempsAttente;
-		this.etat = Etat.ATTENTE_TAXI;
+		this.etat = Etat.ATTENTE_ENVOI_TAXI;
 	}
 
 	/**
@@ -68,21 +69,41 @@ public class Client {
 	public void majEtat() {
 		// Si on a dépassé l'horaire d'abandon, on change l'état du client pour
 		// refléter ce fait.
-		if (etat == Etat.ATTENTE_TAXI && horaireAbandon < referentielTemps.getTemps()) {
+		if (etat != Etat.PRIS_EN_CHARGE && horaireAbandon < referentielTemps.getTemps()) {
 			etat = Etat.ABANDON;
 		}
 	}
 
 	/**
-	 * Teste si le client est toujours en train d'attendre un taxi.
+	 * Teste si le client est toujours en train d'attendre l'envoi d'un taxi.
 	 * 
 	 * @return vrai si et seulement si le client est toujours en train
-	 *         d'attendre un taxi et faux sinon
+	 *         d'attendre l'envoi d'un taxi et faux sinon
 	 */
-	public boolean estEnAttenteTaxi() {
+	public boolean estEnAttenteEnvoiTaxi() {
 		majEtat();
 
-		return etat == Etat.ATTENTE_TAXI;
+		return etat == Etat.ATTENTE_ENVOI_TAXI;
+	}
+
+	/**
+	 * Signale au client l'envoi d'un taxi.
+	 */
+	public void signalerEnvoiTaxi() {
+		etat = Etat.ATTENTE_ARRIVEE_TAXI;
+	}
+	
+	/**
+	 * Teste si le client est toujours en train d'attendre l'arrivée de son
+	 * taxi.
+	 * 
+	 * @return vrai si et seulement si le client est toujours en train
+	 *         d'attendre l'arrivée de son taxi et faux sinon
+	 */
+	public boolean estEnAttenteArriveeTaxi() {
+		majEtat();
+
+		return etat == Etat.ATTENTE_ARRIVEE_TAXI;
 	}
 
 	/**

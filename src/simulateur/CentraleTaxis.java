@@ -22,8 +22,10 @@ public class CentraleTaxis {
 
 	/** Tableau des taxis rattaché à la centrale */
 	private Taxi[] taxis;
-	/** La liste des clients ayant demandé un taxi */
-	private LinkedList<Client> clientsEnAttente;
+	/** La liste des clients ayant demandé un taxi et non affectés */
+	private LinkedList<Client> clientsEnAttenteAffectationTaxi;
+	/** La liste des clients affectés à un taxi mais pas encore pris en charge */
+	private LinkedList<Client> clientsEnAttentePriseEnCharge;
 	/**
 	 * La position de la centrale de taxi dans le repère gradué en mètres ayant
 	 * pour origine le centre de la ville.
@@ -56,7 +58,8 @@ public class CentraleTaxis {
 		this.referentielTemps = referentielTemps;
 
 		this.position = position;
-		this.clientsEnAttente = new LinkedList<Client>();
+		this.clientsEnAttenteAffectationTaxi = new LinkedList<Client>();
+		this.clientsEnAttentePriseEnCharge = new LinkedList<Client>();
 		this.taxis = new Taxi[nombreTaxis];
 
 		for (int i = 0; i < nombreTaxis; i++) {
@@ -74,7 +77,7 @@ public class CentraleTaxis {
 	 * est envoyé.
 	 */
 	public void affecterTaxis() {
-		ListIterator<Client> it = clientsEnAttente.listIterator();
+		ListIterator<Client> it = clientsEnAttenteAffectationTaxi.listIterator();
 		Client client;
 		double distance, distanceMin;
 		Taxi meilleurTaxi;
@@ -88,7 +91,7 @@ public class CentraleTaxis {
 			// à ce qui pourrait être fait dans la réalité mais permet
 			// d'optimiser le processus au niveau informatique sans modifier
 			// pour autant le résultat de la simulation.
-			if (client.estEnAttenteTaxi()) {
+			if (client.estEnAttenteEnvoiTaxi()) {
 				// On envoie le taxi disponible le plus proche du client.
 				distanceMin = Double.MAX_VALUE;
 				meilleurTaxi = null;
@@ -106,12 +109,17 @@ public class CentraleTaxis {
 
 				if (meilleurTaxi != null) {
 					meilleurTaxi.affecterClient(client);
+					// On peut prévenir le client qu'on va lui envoyer son taxi
+					client.signalerEnvoiTaxi();
 					// On peut supprimer le client de la file d'attente
 					it.remove();
+					// et l'ajouter à la liste des clients en attente de prise
+					// en charge par leur taxi
+					clientsEnAttentePriseEnCharge.add(client);
 				}
 			} else {
 				// On a perdu un client ...
-				signalerClientPerdu();
+				nbClientsPerdus++;
 				// On supprime le client de la file d'attente
 				it.remove();
 			}
@@ -135,15 +143,34 @@ public class CentraleTaxis {
 	 *            le nouveau client désirant prendre un taxi
 	 */
 	public void ajouterClient(Client client) {
-		clientsEnAttente.add(client);
+		clientsEnAttenteAffectationTaxi.add(client);
 		nbClients++;
 	}
 
 	/**
-	 * Incrémente d'une unité le compteur de clients perdus.
+	 * Signale la perte d'un client affecté à un taxi.
+	 * 
+	 * @param client
+	 *            le client qui a été perdu
 	 */
-	public void signalerClientPerdu() {
-		nbClientsPerdus++;
+	public void signalerClientAffectePerdu(Client client) {
+		// Si le client était bien dans la liste de clients en attente de
+		// prise en charge, on incrémente le compteur de clients perdus.
+		if (clientsEnAttentePriseEnCharge.remove(client)) {
+			nbClientsPerdus++;
+		}
+	}
+
+	/**
+	 * Signale la prise en charge d'un client par un taxi.
+	 * 
+	 * @param client
+	 *            le client qui a été pris en charge
+	 */
+	public void signalerPriseEnChargeClient(Client client) {
+		// On peut supprimer le client de la liste de clients en attente de
+		// prise en charge
+		clientsEnAttentePriseEnCharge.remove(client);
 	}
 
 	/**
@@ -180,13 +207,22 @@ public class CentraleTaxis {
 	}
 
 	/**
-	 * Retourne la liste des clients non pris en charge par un taxi (mais
-	 * potentiellement déjà affectés à un taxi).
+	 * Retourne la liste des clients en attente d'affectation à un taxi.
 	 * 
-	 * @return la liste des clients non pris en charge par un taxi (mais
-	 *         potentiellement déjà affectés à un taxi)
+	 * @return la liste des clients en attente d'affectation à un taxi
 	 */
-	public LinkedList<Client> getClientsNonPrisEnCharge() {
-		return clientsEnAttente;
+	public LinkedList<Client> getClientsEnAttenteAffectationTaxi() {
+		return clientsEnAttenteAffectationTaxi;
+	}
+
+	/**
+	 * Retourne la liste des clients affectés à un taxi mais pas encore pris en
+	 * charge par leur taxi.
+	 * 
+	 * @return la liste des clients affectés à un taxi mais pas encore pris en
+	 *         charge par leur taxi
+	 */
+	public LinkedList<Client> getClientsEnAttentePriseEnCharge() {
+		return clientsEnAttentePriseEnCharge;
 	}
 }

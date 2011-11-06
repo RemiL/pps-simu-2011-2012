@@ -25,8 +25,8 @@ public class AffichageVille extends JPanel {
 	private GeneralPath[] listePaths;
 	/** La liste des taxis */
 	private Taxi[] listeTaxis;
-	/** La liste des clients */
-	private LinkedList<Client> listeClients;
+	/** Les liste des clients */
+	private LinkedList<Client> listeClientsEnAttenteAffectationTaxi, listeClientsEnAttentePriseEnCharge;
 	/** Le rayon de la ville */
 	private int rayonVille;
 	/** La liste des couleurs utilisés pour dessiner les chemins des taxis */
@@ -49,7 +49,6 @@ public class AffichageVille extends JPanel {
 		rayonVille = rayon;
 		listePaths = new GeneralPath[nbTaxis];
 		listeTaxis = new Taxi[nbTaxis];
-		listeClients = new LinkedList<Client>();
 		tailleBasePoint = 6;
 	}
 
@@ -86,11 +85,21 @@ public class AffichageVille extends JPanel {
 		g2D.setColor(Color.white);
 		g2D.fillOval(posX, posY, (int) (rayonVille * 2 * scale), (int) (rayonVille * 2 * scale));
 
-		// Affichage des clients. Ils sont représentés par des carrés rouges
+		// Affichage des clients en attente d'affectation à un taxi.
+		// Ils sont représentés par des carrés rouges.
 		g2D.setColor(Color.red);
-		for (Client c : listeClients) {
-			g2D.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2), (int) ((c
-					.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
+		for (Client c : listeClientsEnAttenteAffectationTaxi) {
+			g2D.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2),
+					(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
+					(int) tailleBasePoint, (int) tailleBasePoint);
+		}
+		
+		// Affichage des clients en attente de prise en charge par un taxi.
+		// Ils sont représentés par des carrés orange.
+		g2D.setColor(Color.orange);
+		for (Client c : listeClientsEnAttentePriseEnCharge) {
+			g2D.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2),
+					(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
 					(int) tailleBasePoint, (int) tailleBasePoint);
 		}
 
@@ -115,11 +124,12 @@ public class AffichageVille extends JPanel {
 				g2D.fillOval((int) (path.getCurrentPoint().getX() - (tailleBasePoint / 2)), (int) (path
 						.getCurrentPoint().getY() - (tailleBasePoint / 2)), (int) tailleBasePoint,
 						(int) tailleBasePoint);
-				
+
 				// Affiche le nombre de clients qu'à le taxi
 				Font font = new Font("Arial", Font.BOLD, 15);
 				g2D.setFont(font);
-				g2D.drawString("(" + listeTaxis[i].getNbClientsDansTaxi() + ", " + listeTaxis[i].getNbClientsAffectes() + ")", (int) (path.getCurrentPoint().getX() + 5), (int) (path.getCurrentPoint().getY() + 5));
+				g2D.drawString("(" + listeTaxis[i].getNbClientsDansTaxi() + ", " + listeTaxis[i].getNbClientsAffectes()
+						+ ")", (int) (path.getCurrentPoint().getX() + 5), (int) (path.getCurrentPoint().getY() + 5));
 			}
 		}
 	}
@@ -147,10 +157,15 @@ public class AffichageVille extends JPanel {
 	/**
 	 * Modifie la liste des clients
 	 * 
-	 * @param clients
-	 *            la liste des clients non pris en charge dans la ville
+	 * @param clientsEnAttenteAffectationTaxi
+	 *            la liste des clients en attente d'affectation à un taxi
+	 * @param clientsEnAttentePriseEnCharge
+	 *            la liste des clients affectés à un taxi mais pas encore pris
+	 *            en charge
 	 */
-	public void setClients(LinkedList<Client> clients) {
-		listeClients = clients;
+	public void setClients(LinkedList<Client> clientsEnAttenteAffectationTaxi,
+			LinkedList<Client> clientsEnAttentePriseEnCharge) {
+		listeClientsEnAttenteAffectationTaxi = clientsEnAttenteAffectationTaxi;
+		listeClientsEnAttentePriseEnCharge = clientsEnAttentePriseEnCharge;
 	}
 }
