@@ -14,6 +14,7 @@ public class SimulateurTaxis implements ActionListener {
 	private ReferentielTemps referentielTemps;
 	private int nbRepetitions;
 	private int nbTaxis;
+	private int nbClientsMax;
 	private double pourcentageClientsSatisfaits;
 	private double resultat;
 	private double accelerationAnimation;
@@ -53,11 +54,12 @@ public class SimulateurTaxis implements ActionListener {
 				"Rayon d'exclusion de l'arrivée (km)",
 				"Temps d'attente moyen (min)",
 				"Ecart type du temps d'attente (min)",
+				"Nombre de clients max par taxi",
 				"Pourcentage de clients satisfaits", "Nombre de répétitions",
 				"Accélération de l'animation (0 pour aucune animation)" };
 		String[] defaults1 = { "10000", "2", "10", "0", "0", "45", "10", "1",
-				"20", "10", "80", "1", "100" };
-		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+				"20", "10", "2", "80", "1", "100" };
+		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 		String[] labels2 = { "Nombre d'échantillons",
 				"Durée de la simulation (h)", "Rayon de la ville (km)",
 				"Position x de la centrale (km)",
@@ -66,11 +68,11 @@ public class SimulateurTaxis implements ActionListener {
 				"Rayon d'exclusion de l'arrivée (km)",
 				"Temps d'attente moyen (min)",
 				"Ecart type du temps d'attente (min)", "Nombre de taxis",
-				"Nombre de répétitions",
+				"Nombre de clients max par taxi", "Nombre de répétitions",
 				"Accélération de l'animation (0 pour aucune animation)" };
-		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 		String[] defaults2 = { "10000", "2", "10", "0", "0", "45", "10", "1",
-				"20", "10", "2", "1", "100" };
+				"20", "10", "2", "2", "1", "100" };
 		fenetre.initAffichageInit(labels1, defaults1, widths1, labels2,
 				defaults2, widths2);
 	}
@@ -80,7 +82,7 @@ public class SimulateurTaxis implements ActionListener {
 		stop = false;
 		play = true;
 		fenetre.changeBoutonPausePlay(play, stop);
-		
+
 		// On fait la simulation en fonction de son type
 		if (typeSimulation == 0) {
 
@@ -89,7 +91,7 @@ public class SimulateurTaxis implements ActionListener {
 			// une moyenne
 			for (int rep = 0; rep < nbRepetitions && !stop; rep++) {
 				centrale = new CentraleTaxis(referentielTemps, nbTaxis,
-						positionCentrale, vitesse);
+						positionCentrale, vitesse, nbClientsMax);
 				fenetre.initAffichageVille(nbTaxis, rayonVille);
 
 				// On effectue la boucle n+1 fois puisque la première itération
@@ -181,7 +183,8 @@ public class SimulateurTaxis implements ActionListener {
 				this.nbTaxis = Integer.parseInt(parametres
 						.get("Nombre de taxis"));
 			}
-
+			this.nbClientsMax = Integer.parseInt(parametres
+					.get("Nombre de clients max par taxi"));
 			this.accelerationAnimation = Double
 					.parseDouble(parametres
 							.get("Accélération de l'animation (0 pour aucune animation)"));

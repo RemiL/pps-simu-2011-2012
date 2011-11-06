@@ -14,7 +14,7 @@ public class CentraleTaxis {
 	private int nbClients;
 	private int nbClientsPerdus;
 
-	public CentraleTaxis(ReferentielTemps referentielTemps, int nombreTaxis, Point2D.Double position, double vitesse) {
+	public CentraleTaxis(ReferentielTemps referentielTemps, int nombreTaxis, Point2D.Double position, double vitesse, int nbClientsMax) {
 		this.referentielTemps = referentielTemps;
 
 		this.position = position;
@@ -22,7 +22,7 @@ public class CentraleTaxis {
 		this.taxis = new Taxi[nombreTaxis];
 
 		for (int i = 0; i < nombreTaxis; i++) {
-			taxis[i] = new Taxi(referentielTemps, this, position, vitesse);
+			taxis[i] = new Taxi(referentielTemps, this, position, vitesse, nbClientsMax);
 		}
 
 		this.nbClients = 0;
