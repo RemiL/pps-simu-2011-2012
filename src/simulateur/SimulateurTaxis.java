@@ -105,9 +105,11 @@ public class SimulateurTaxis implements ActionListener {
 						i--;
 					}
 					try {
-						// Le temps d'attente entre chaque rafraîchissement de
-						// l'animation
-						Thread.sleep((long) (referentielTemps.getDt() * 1000 / accelerationAnimation));
+						if (accelerationAnimation != 0.0) {
+							// Le temps d'attente entre chaque rafraîchissement
+							// de l'animation
+							Thread.sleep((long) (referentielTemps.getDt() * 1000 / accelerationAnimation));
+						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
