@@ -132,12 +132,15 @@ public class Fenetre extends JFrame {
 	 * @param typeSimulation
 	 *            le type de la simulation, 0 pour une recherche de nombre de
 	 *            taxis, 1 pour une recherche de pourcentage
-	 * @param resultat
-	 *            le résultat de la simulation
+	 * @param pourcentageClientsSatisfaits
+	 *            le pourcentage de clients satisfaits
+	 * @param nbTaxis
+	 *            le nombre de taxis
 	 */
-	public void afficherResultat(HashMap<String, String> parametres, int typeSimulation, double resultat) {
+	public void afficherResultat(HashMap<String, String> parametres, int typeSimulation,
+			double pourcentageClientsSatisfaits, int nbTaxis) {
 		this.getContentPane().removeAll();
-		AffichageResultat pan = new AffichageResultat(parametres, typeSimulation, resultat);
+		AffichageResultat pan = new AffichageResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, nbTaxis);
 		this.add(pan, BorderLayout.NORTH);
 
 		panBas = new JPanel();

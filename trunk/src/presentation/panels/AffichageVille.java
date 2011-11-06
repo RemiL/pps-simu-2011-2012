@@ -93,7 +93,7 @@ public class AffichageVille extends JPanel {
 					(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
 					(int) tailleBasePoint, (int) tailleBasePoint);
 		}
-		
+
 		// Affichage des clients en attente de prise en charge par un taxi.
 		// Ils sont représentés par des carrés orange.
 		g2D.setColor(Color.orange);

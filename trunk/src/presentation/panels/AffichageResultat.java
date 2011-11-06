@@ -20,10 +20,13 @@ public class AffichageResultat extends JPanel {
 	 *            les paramètres de la simulation
 	 * @param typeSimulation
 	 *            le type de la simulation (0 ou 1)
-	 * @param resultat
-	 *            le résultat de la simulation
+	 * @param pourcentageClientsSatisfaits
+	 *            le pourcentage de clients satisfaits
+	 * @param nbTaxis
+	 *            le nombre de taxis
 	 */
-	public AffichageResultat(HashMap<String, String> parametres, int typeSimulation, double resultat) {
+	public AffichageResultat(HashMap<String, String> parametres, int typeSimulation,
+			double pourcentageClientsSatisfaits, int nbTaxis) {
 		super(new GridLayout(parametres.size() + 1, 2, 20, 10));
 
 		// Affiche les paramètres de la simulation
@@ -36,15 +39,15 @@ public class AffichageResultat extends JPanel {
 
 		// Affiche le résultat de la simulation
 		if (typeSimulation == 0) {
-			JLabel label = new JLabel("Résultat (Nombre de taxis) : ");
+			JLabel label = new JLabel("Résultat : Nombre de taxis : ");
 			label.setHorizontalAlignment(JLabel.RIGHT);
 			this.add(label);
-			this.add(new JLabel("" + (int) resultat));
+			this.add(new JLabel(nbTaxis + " (pourcentage de clients satisfaits : " + pourcentageClientsSatisfaits + ")"));
 		} else {
-			JLabel label = new JLabel("Résultat (Pourcentage de clients satisfaits) : ");
+			JLabel label = new JLabel("Résultat : Pourcentage de clients satisfaits : ");
 			label.setHorizontalAlignment(JLabel.RIGHT);
 			this.add(label);
-			this.add(new JLabel("" + resultat));
+			this.add(new JLabel(pourcentageClientsSatisfaits + "%"));
 		}
 	}
 }

@@ -23,8 +23,8 @@ public class SimulateurTaxis implements ActionListener {
 	private int nbRepetitions;
 	private int nbTaxis;
 	private int nbClientsMax;
+	private double pourcentageClientsSatisfaitsRequis;
 	private double pourcentageClientsSatisfaits;
-	private double resultat;
 	private double accelerationAnimation;
 
 	private CentraleTaxis centrale;
@@ -73,59 +73,53 @@ public class SimulateurTaxis implements ActionListener {
 	}
 
 	public void simuler() {
-		resultat = 0;
+		pourcentageClientsSatisfaits = 0;
 		stop = false;
 		play = true;
 		fenetre.changeBoutonPausePlay(play, stop);
 
-		// On fait la simulation en fonction de son type
-		if (typeSimulation == 0) {
+		// On réalise un certain nombre de fois la simulation
+		// pour avoir une moyenne
+		for (int rep = 0; rep < nbRepetitions && !stop; rep++) {
+			referentielTemps.reset();
+			centrale = new CentraleTaxis(referentielTemps, nbTaxis, positionCentrale, vitesse, nbClientsMax);
+			fenetre.initAffichageVille(nbTaxis, rayonVille);
 
-		} else {
-			// On réalise un certain nombre de fois la simulation pour avoir
-			// une moyenne
-			for (int rep = 0; rep < nbRepetitions && !stop; rep++) {
-				referentielTemps.reset();
-				centrale = new CentraleTaxis(referentielTemps, nbTaxis, positionCentrale, vitesse, nbClientsMax);
-				fenetre.initAffichageVille(nbTaxis, rayonVille);
+			// On effectue la boucle n+1 fois puisque la première itération
+			// sert à l'initialisation, les taxis effectueront donc bien n
+			// mouvements.
+			for (int i = 0; i <= nbEchantillons && !stop; i++) {
+				if (play) {
+					// On affecte les clients en attente aux taxis disponibles,
+					centrale.affecterTaxis();
+					// on calcule le déplacement des taxis
+					// pendant l'intervalle dt
+					centrale.deplacerTaxis();
+					// puis on génère l'apparition d'éventuels nouveaux clients.
+					simulerApparitionClients();
+					// On incrémente l'horloge.
+					referentielTemps.incrementerTemps();
 
-				// On effectue la boucle n+1 fois puisque la première itération
-				// sert à l'initialisation, les taxis effectueront donc bien n
-				// mouvements.
-				for (int i = 0; i <= nbEchantillons && !stop; i++) {
-					if (play) {
-						// On affecte les clients en attente aux taxis
-						// disponibles,
-						centrale.affecterTaxis();
-						// on calcule le déplacement des taxis pendant
-						// l'intervalle dt
-						centrale.deplacerTaxis();
-						// puis on génère l'apparition d'éventuels nouveaux
-						// clients.
-						simulerApparitionClients();
-						// On incrémente l'horloge.
-						referentielTemps.incrementerTemps();
-
-						fenetre.setInfos(i, nbTaxis, rep);
-						fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsEnAttenteAffectationTaxi(),
-								centrale.getClientsEnAttentePriseEnCharge());
-					} else {
-						i--;
-					}
-					try {
-						if (accelerationAnimation != 0.0) {
-							// Le temps d'attente entre chaque rafraîchissement
-							// de l'animation
-							Thread.sleep((long) (referentielTemps.getDt() * 1000 / accelerationAnimation));
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					fenetre.setInfos(i, nbTaxis, rep);
+					fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsEnAttenteAffectationTaxi(),
+							centrale.getClientsEnAttentePriseEnCharge());
+				} else {
+					i--;
 				}
-				resultat += 100.0 * (centrale.getNbClients() - centrale.getNbClientsPerdus()) / centrale.getNbClients();
+				try {
+					if (accelerationAnimation != 0.0) {
+						// Le temps d'attente entre chaque rafraîchissement de
+						// l'animation
+						Thread.sleep((long) (referentielTemps.getDt() * 1000 / accelerationAnimation));
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-			resultat /= nbRepetitions;
+			pourcentageClientsSatisfaits += 100.0 * (centrale.getNbClients() - centrale.getNbClientsPerdus())
+					/ centrale.getNbClients();
 		}
+		pourcentageClientsSatisfaits /= nbRepetitions;
 
 		fenetre.finaliserSimulation();
 	}
@@ -145,6 +139,15 @@ public class SimulateurTaxis implements ActionListener {
 		}
 	}
 
+	public void chercherNbTaxisNecessaires() {
+		this.nbTaxis = 0;
+
+		do {
+			this.nbTaxis++;
+			simuler();
+		} while (pourcentageClientsSatisfaits < pourcentageClientsSatisfaitsRequis);
+	}
+
 	public static void main(String[] args) {
 		SimulateurTaxis simulateur = new SimulateurTaxis();
 		simulateur.configurer();
@@ -162,7 +165,7 @@ public class SimulateurTaxis implements ActionListener {
 			if (typeSimulation == 0) {
 				// On cherche le nombre de taxis à utiliser pour atteindre un
 				// certain pourcentage de satisfaction des clients.
-				this.pourcentageClientsSatisfaits = Double.parseDouble(parametres
+				this.pourcentageClientsSatisfaitsRequis = Double.parseDouble(parametres
 						.get("Pourcentage de clients satisfaits"));
 			} else if (typeSimulation == 1) {
 				// On cherche le pourcentage de satisfaction des clients
@@ -196,7 +199,7 @@ public class SimulateurTaxis implements ActionListener {
 			play = !play;
 			fenetre.changeBoutonPausePlay(play, stop);
 		} else if (arg0.getSource() == fenetre.getBoutonResultat()) {
-			fenetre.afficherResultat(parametres, typeSimulation, resultat);
+			fenetre.afficherResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, this.nbTaxis);
 		} else if (arg0.getSource() == fenetre.getBoutonNouvelleSimulation()) {
 			this.configurer();
 		} else if (arg0.getSource() == fenetre.getBoutonResimuler()) {
@@ -208,7 +211,11 @@ public class SimulateurTaxis implements ActionListener {
 
 	class PlaySimulation implements Runnable {
 		public void run() {
-			simuler();
+			if (typeSimulation == 0) {
+				chercherNbTaxisNecessaires();
+			} else if (typeSimulation == 1) {
+				simuler();
+			}
 		}
 	}
 }
