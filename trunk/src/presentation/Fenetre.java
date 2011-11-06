@@ -81,11 +81,10 @@ public class Fenetre extends JFrame {
 	 * @param widths2
 	 *            la tailles des seconds champs
 	 */
-	public void initAffichageInit(String[] labels1, String[] defaults1,
-			int[] widths1, String[] labels2, String[] defaults2, int[] widths2) {
+	public void initAffichageInit(String[] labels1, String[] defaults1, int[] widths1, String[] labels2,
+			String[] defaults2, int[] widths2) {
 		this.getContentPane().removeAll();
-		affichageInit = new AffichageInit(labels1, defaults1, widths1, labels2,
-				defaults2, widths2);
+		affichageInit = new AffichageInit(labels1, defaults1, widths1, labels2, defaults2, widths2);
 		this.setLayout(new BorderLayout());
 		this.getContentPane().add(affichageInit, BorderLayout.NORTH);
 
@@ -136,11 +135,9 @@ public class Fenetre extends JFrame {
 	 * @param resultat
 	 *            le résultat de la simulation
 	 */
-	public void afficherResultat(HashMap<String, String> parametres,
-			int typeSimulation, double resultat) {
+	public void afficherResultat(HashMap<String, String> parametres, int typeSimulation, double resultat) {
 		this.getContentPane().removeAll();
-		AffichageResultat pan = new AffichageResultat(parametres,
-				typeSimulation, resultat);
+		AffichageResultat pan = new AffichageResultat(parametres, typeSimulation, resultat);
 		this.add(pan, BorderLayout.NORTH);
 
 		panBas = new JPanel();
@@ -157,13 +154,17 @@ public class Fenetre extends JFrame {
 	 * 
 	 * @param taxis
 	 *            la liste des taxis dans la ville
-	 * @param clients
-	 *            la liste des clients non pris en charge dans la ville
+	 * @param clientsEnAttenteAffectationTaxi
+	 *            la liste des clients en attente d'affectation à un taxi
+	 * @param clientsEnAttentePriseEnCharge
+	 *            la liste des clients affectés à un taxi mais pas encore pris
+	 *            en charge
 	 */
-	public void setAffichageVille(Taxi[] taxis, LinkedList<Client> clients) {
+	public void setAffichageVille(Taxi[] taxis, LinkedList<Client> clientsEnAttenteAffectationTaxi,
+			LinkedList<Client> clientsEnAttentePriseEnCharge) {
 		if (affichageVille != null) {
 			affichageVille.setTaxis(taxis);
-			affichageVille.setClients(clients);
+			affichageVille.setClients(clientsEnAttenteAffectationTaxi, clientsEnAttentePriseEnCharge);
 			affichageVille.repaint();
 		}
 	}

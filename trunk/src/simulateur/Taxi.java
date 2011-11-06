@@ -65,7 +65,8 @@ public class Taxi {
 	 * @param nbClientsMax
 	 *            le nombre de clients max
 	 */
-	public Taxi(ReferentielTemps referentielTemps, CentraleTaxis centrale, Point2D.Double positionDepart, double vitesse, int nbClientsMax) {
+	public Taxi(ReferentielTemps referentielTemps, CentraleTaxis centrale, Point2D.Double positionDepart,
+			double vitesse, int nbClientsMax) {
 		this.referentielTemps = referentielTemps;
 
 		this.centrale = centrale;
@@ -84,8 +85,8 @@ public class Taxi {
 	 * client. Au contraire, s'il est déjà affecté au maximum de clients, il est
 	 * toujours considéré comme non disponible quelque soit le client. Dans le
 	 * cas où le taxi est affecté à un client, il est considéré comme disponible
-	 * pour un nème client uniquement si les points de départ et d'arrivée
-	 * du nouveau client sont compris dans une bande semie-infinie autour de la
+	 * pour un nème client uniquement si les points de départ et d'arrivée du
+	 * nouveau client sont compris dans une bande semie-infinie autour de la
 	 * trajectoire de la course courante, de largueur égale à un tiers de la
 	 * distance restant à parcourir pour la course actualle.
 	 * 
@@ -234,10 +235,11 @@ public class Taxi {
 	private void prendreEnCharge(Client client) {
 		// On s'assure que le client attend toujours
 		// avant de le prendre en charge.
-		if (client.estEnAttenteTaxi()) {
+		if (client.estEnAttenteArriveeTaxi()) {
 			client.prendreEnCharge();
+			centrale.signalerPriseEnChargeClient(client);
 		} else { // Si non alors on a perdu un client.
-			centrale.signalerClientPerdu();
+			centrale.signalerClientAffectePerdu(client);
 			clients.remove(client);
 		}
 
