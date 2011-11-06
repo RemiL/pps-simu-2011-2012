@@ -32,8 +32,8 @@ public class CentraleTaxis {
 	public void affecterTaxis() {
 		ListIterator<Client> it = clientsEnAttente.listIterator();
 		Client client;
-		double distance, distanceMin = Double.MAX_VALUE;
-		Taxi meilleurTaxi = null;
+		double distance, distanceMin;
+		Taxi meilleurTaxi;
 
 		while (it.hasNext()) {
 			client = it.next();
@@ -45,6 +45,10 @@ public class CentraleTaxis {
 			// d'optimiser le processus au niveau informatique sans modifier
 			// pour autant le résultat de la simulation.
 			if (client.estEnAttenteTaxi()) {
+				// On envoi le taxi disponible le plus proche du client.
+				distanceMin = Double.MAX_VALUE;
+				meilleurTaxi = null;
+
 				for (Taxi taxi : taxis) {
 					if (taxi.estDisponible(client)) {
 						distance = taxi.getDistanceCarre(client);
@@ -92,7 +96,7 @@ public class CentraleTaxis {
 	public int getNbClientsPerdus() {
 		return nbClientsPerdus;
 	}
-	
+
 	public Taxi[] getTaxis() {
 		return taxis;
 	}
