@@ -197,4 +197,18 @@ public class Taxi {
 	public Point2D getPosition() {
 		return position;
 	}
+
+	public int getNbClientsAffectes() {
+		return clients.size();
+	}
+	
+	public int getNbClientsDansTaxi() {
+		int res = 0;
+		for(Client c : clients)
+		{
+			if(c.estPrisEnCharge())
+				res++;
+		}
+		return res;
+	}
 }

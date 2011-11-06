@@ -1,6 +1,7 @@
 package presentation.panels;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -22,6 +23,8 @@ public class AffichageVille extends JPanel {
 
 	/** La liste des chemins des taxis */
 	private GeneralPath[] listePaths;
+	/** La liste des taxis */
+	private Taxi[] listeTaxis;
 	/** La liste des clients */
 	private LinkedList<Client> listeClients;
 	/** Le rayon de la ville */
@@ -45,6 +48,7 @@ public class AffichageVille extends JPanel {
 
 		rayonVille = rayon;
 		listePaths = new GeneralPath[nbTaxis];
+		listeTaxis = new Taxi[nbTaxis];
 		listeClients = new LinkedList<Client>();
 		tailleBasePoint = 6;
 	}
@@ -111,17 +115,23 @@ public class AffichageVille extends JPanel {
 				g2D.fillOval((int) (path.getCurrentPoint().getX() - (tailleBasePoint / 2)), (int) (path
 						.getCurrentPoint().getY() - (tailleBasePoint / 2)), (int) tailleBasePoint,
 						(int) tailleBasePoint);
+				
+				// Affiche le nombre de clients qu'à le taxi
+				Font font = new Font("Arial", Font.BOLD, 15);
+				g2D.setFont(font);
+				g2D.drawString("(" + listeTaxis[i].getNbClientsDansTaxi() + ", " + listeTaxis[i].getNbClientsAffectes() + ")", (int) (path.getCurrentPoint().getX() + 5), (int) (path.getCurrentPoint().getY() + 5));
 			}
 		}
 	}
 
 	/**
-	 * Modifie le chemin des taxis dans la liste
+	 * Modifie le chemin des taxis et la liste des taxis
 	 * 
 	 * @param taxis
 	 *            la liste des taxis présents dans la ville
 	 */
-	public void setPosTaxis(Taxi[] taxis) {
+	public void setTaxis(Taxi[] taxis) {
+		listeTaxis = taxis;
 		// Pour chaque taxi, on complète son chemin
 		for (int i = 0; i < taxis.length; i++) {
 			// Si le chemin n'existe pas on en crée un nouveau sinon il est
@@ -135,12 +145,12 @@ public class AffichageVille extends JPanel {
 	}
 
 	/**
-	 * Modifie la liste des positions des clients
+	 * Modifie la liste des clients
 	 * 
 	 * @param clients
 	 *            la liste des clients non pris en charge dans la ville
 	 */
-	public void setPosClients(LinkedList<Client> clients) {
+	public void setClients(LinkedList<Client> clients) {
 		listeClients = clients;
 	}
 }
