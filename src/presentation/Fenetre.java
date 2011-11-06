@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -126,13 +125,24 @@ public class Fenetre extends JFrame {
 		this.repaint();
 	}
 
+	/**
+	 * Affiche le résultat de la simulation
+	 * 
+	 * @param parametres
+	 *            les paramètres de la simulation
+	 * @param typeSimulation
+	 *            le type de la simulation, 0 pour une recherche de nombre de
+	 *            taxis, 1 pour une recherche de pourcentage
+	 * @param resultat
+	 *            le résultat de la simulation
+	 */
 	public void afficherResultat(HashMap<String, String> parametres,
 			int typeSimulation, double resultat) {
 		this.getContentPane().removeAll();
 		AffichageResultat pan = new AffichageResultat(parametres,
 				typeSimulation, resultat);
 		this.add(pan, BorderLayout.NORTH);
-		
+
 		panBas = new JPanel();
 		panBas.add(boutonNouvelleSimulation);
 		panBas.add(boutonResimuler);
@@ -152,8 +162,8 @@ public class Fenetre extends JFrame {
 	 */
 	public void setAffichageVille(Taxi[] taxis, LinkedList<Client> clients) {
 		if (affichageVille != null) {
-			affichageVille.setPosTaxis(taxis);
-			affichageVille.setPosClients(clients);
+			affichageVille.setTaxis(taxis);
+			affichageVille.setClients(clients);
 			affichageVille.repaint();
 		}
 	}
@@ -166,7 +176,7 @@ public class Fenetre extends JFrame {
 	 *            le temps actuel
 	 * @param nbTaxis
 	 *            le nombre de taxis
-	 * @param rep 
+	 * @param rep
 	 *            la répartition actuelle partant de 0
 	 */
 	public void setInfos(int tempsActuel, int nbTaxis, int rep) {
@@ -206,7 +216,7 @@ public class Fenetre extends JFrame {
 	public JButton getBoutonPausePlay() {
 		return boutonPausePlay;
 	}
-	
+
 	/**
 	 * Return l'instance du bouton pour afficher le résultat
 	 * 
@@ -215,7 +225,7 @@ public class Fenetre extends JFrame {
 	public JButton getBoutonResultat() {
 		return boutonResultat;
 	}
-	
+
 	/**
 	 * Return l'instance du bouton pour configurer une nouvelle simulation
 	 * 
@@ -224,7 +234,7 @@ public class Fenetre extends JFrame {
 	public JButton getBoutonNouvelleSimulation() {
 		return boutonNouvelleSimulation;
 	}
-	
+
 	/**
 	 * Return l'instance du bouton pour relancer la simulation
 	 * 
@@ -287,9 +297,8 @@ public class Fenetre extends JFrame {
 	}
 
 	/**
-	 * Met fin à la simulation
-	 * Les boutons play/pause et stop ne sont plus utilisables
-	 * Le bouton "Résultat" s'affiche pour accéder au résultat 
+	 * Met fin à la simulation Les boutons play/pause et stop ne sont plus
+	 * utilisables Le bouton "Résultat" s'affiche pour accéder au résultat
 	 */
 	public void finaliserSimulation() {
 		panBas.removeAll();
