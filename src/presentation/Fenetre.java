@@ -52,7 +52,7 @@ public class Fenetre extends JFrame {
 		this.setSize(700, 700);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setMinimumSize(new Dimension(600, 600));
+		this.setMinimumSize(new Dimension(700, 700));
 		this.setVisible(true);
 
 		boutonStop = new JButton("Stop");
