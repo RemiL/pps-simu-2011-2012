@@ -62,6 +62,8 @@ public class Fenetre extends JFrame {
 		boutonResultat = new JButton("Résultat");
 		boutonNouvelleSimulation = new JButton("Nouvelle simulation");
 		boutonResimuler = new JButton("Relancer");
+		
+		panBas = new JPanel();
 	}
 
 	/**
@@ -117,7 +119,6 @@ public class Fenetre extends JFrame {
 		this.getContentPane().add(affichageVille, BorderLayout.CENTER);
 		this.add(affichageInfos, BorderLayout.NORTH);
 
-		panBas = new JPanel();
 		panBas.add(boutonPausePlay);
 		panBas.add(boutonStop);
 
