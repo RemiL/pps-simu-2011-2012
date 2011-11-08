@@ -2,6 +2,7 @@ package presentation;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -104,10 +105,12 @@ public class Fenetre extends JFrame {
 	 *            le nombre de taxis
 	 * @param rayon
 	 *            le rayon de la ville
+	 * @param positionCentrale
+	 *            la position de la centrale de taxis
 	 */
-	public void initAffichageVille(int nbTaxis, int rayon) {
+	public void initAffichageVille(int nbTaxis, int rayon, Point2D.Double positionCentrale) {
 		this.getContentPane().removeAll();
-		affichageVille = new AffichageVille(nbTaxis, rayon);
+		affichageVille = new AffichageVille(nbTaxis, rayon, positionCentrale);
 		affichageInfos = new AffichageInfos();
 
 		this.setLayout(new BorderLayout());
