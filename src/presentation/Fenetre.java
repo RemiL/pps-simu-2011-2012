@@ -42,6 +42,8 @@ public class Fenetre extends JFrame {
 	private JButton boutonNouvelleSimulation;
 	/** Le bouton pour refaire la simulation */
 	private JButton boutonResimuler;
+	/** Le bouton pour arrêter la simulation s'il n'y a pas d'animation */
+	private JButton boutonStopSansAnime;
 	/** Le panel pour les boutons en bas de l'animation */
 	private JPanel panBas;
 
@@ -62,6 +64,7 @@ public class Fenetre extends JFrame {
 		boutonResultat = new JButton("Résultat");
 		boutonNouvelleSimulation = new JButton("Nouvelle simulation");
 		boutonResimuler = new JButton("Relancer");
+		boutonStopSansAnime = new JButton("Stop");
 		
 		panBas = new JPanel();
 	}
@@ -88,13 +91,12 @@ public class Fenetre extends JFrame {
 			String[] defaults2, int[] widths2) {
 		this.getContentPane().removeAll();
 		affichageInit = new AffichageInit(labels1, defaults1, widths1, labels2, defaults2, widths2);
-		this.setLayout(new BorderLayout());
 		this.getContentPane().add(affichageInit, BorderLayout.NORTH);
 
 		JPanel pan = new JPanel();
 		pan.add(boutonSimuler);
 
-		this.add(pan, BorderLayout.SOUTH);
+		this.getContentPane().add(pan, BorderLayout.SOUTH);
 		affichageInit.revalidate();
 		this.repaint();
 	}
@@ -115,14 +117,15 @@ public class Fenetre extends JFrame {
 		affichageVille = new AffichageVille(nbTaxis, rayon, positionCentrale);
 		affichageInfos = new AffichageInfos();
 
-		this.setLayout(new BorderLayout());
 		this.getContentPane().add(affichageVille, BorderLayout.CENTER);
-		this.add(affichageInfos, BorderLayout.NORTH);
+		this.getContentPane().add(affichageInfos, BorderLayout.NORTH);
 
+		panBas.removeAll();
+		
 		panBas.add(boutonPausePlay);
 		panBas.add(boutonStop);
 
-		this.add(panBas, BorderLayout.SOUTH);
+		this.getContentPane().add(panBas, BorderLayout.SOUTH);
 		affichageVille.revalidate();
 		affichageInfos.revalidate();
 		this.repaint();
@@ -145,12 +148,12 @@ public class Fenetre extends JFrame {
 			double pourcentageClientsSatisfaits, int nbTaxis) {
 		this.getContentPane().removeAll();
 		AffichageResultat pan = new AffichageResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, nbTaxis);
-		this.add(pan, BorderLayout.NORTH);
+		this.getContentPane().add(pan, BorderLayout.NORTH);
 
 		panBas = new JPanel();
 		panBas.add(boutonNouvelleSimulation);
 		panBas.add(boutonResimuler);
-		this.add(panBas, BorderLayout.SOUTH);
+		this.getContentPane().add(panBas, BorderLayout.SOUTH);
 		pan.revalidate();
 		panBas.revalidate();
 		this.repaint();
@@ -251,6 +254,15 @@ public class Fenetre extends JFrame {
 	public JButton getBoutonResimuler() {
 		return boutonResimuler;
 	}
+	
+	/**
+	 * Return l'instance du bouton pour stopper la simulation quand il n'y a pas d'animation
+	 * 
+	 * @return l'instance du bouton pour stopper la simulation quand il n'y a pas d'animation
+	 */
+	public JButton getBoutonStopSansAnime() {
+		return boutonStopSansAnime;
+	}
 
 	/**
 	 * Change l'état des bouton play/pause et stop
@@ -313,5 +325,15 @@ public class Fenetre extends JFrame {
 		panBas.add(boutonResultat);
 		panBas.revalidate();
 		panBas.repaint();
+	}
+
+	/**
+	 * Affiche un bouton pour stopper la simulation
+	 */
+	public void afficherSimulationEnCours() {
+		this.getContentPane().removeAll();
+		this.getContentPane().add(boutonStopSansAnime, BorderLayout.SOUTH);
+		this.validate();
+		this.repaint();
 	}
 }
