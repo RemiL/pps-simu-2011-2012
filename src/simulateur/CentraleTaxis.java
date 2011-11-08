@@ -227,4 +227,15 @@ public class CentraleTaxis {
 	public LinkedList<Client> getClientsEnAttentePriseEnCharge() {
 		return clientsEnAttentePriseEnCharge;
 	}
+
+	/**
+	 * Retourne la position de la centrale dans le repère gradué en mètres ayant
+	 * pour origine le centre de la ville.
+	 * 
+	 * @return la position de la centrale dans le repère gradué en mètres ayant
+	 *         pour origine le centre de la ville
+	 */
+	public Point2D.Double getPosition() {
+		return position;
+	}
 }

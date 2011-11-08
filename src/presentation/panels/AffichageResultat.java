@@ -42,9 +42,7 @@ public class AffichageResultat extends JPanel {
 			JLabel label = new JLabel("Résultat : Nombre de taxis : ");
 			label.setHorizontalAlignment(JLabel.RIGHT);
 			this.add(label);
-			this
-					.add(new JLabel(nbTaxis + " (pourcentage de clients satisfaits : " + pourcentageClientsSatisfaits
-							+ ")"));
+			this.add(new JLabel(nbTaxis + " (pourcentage de clients satisfaits : " + pourcentageClientsSatisfaits + ")"));
 		} else {
 			JLabel label = new JLabel("Résultat : Pourcentage de clients satisfaits : ");
 			label.setHorizontalAlignment(JLabel.RIGHT);
