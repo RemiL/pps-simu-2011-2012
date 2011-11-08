@@ -19,7 +19,8 @@ import utils.OutilsGeometriques;
  * semi-infinie de largeur égale à un tiers de la distance restant à parcourir
  * dans la course courante. Dans le cas où deux clients sont affectés au même
  * taxi, le taxi va toujours à la destination la plus proche que ça soit le
- * point de départ ou d'arrivée d'un de ses clients.
+ * point de départ ou d'arrivée d'un de ses clients. Quand le taxi n'a pas de
+ * client, il rentre à la centrale.
  */
 public class Taxi {
 	/**
@@ -271,8 +272,8 @@ public class Taxi {
 			} else {
 				allerChercher(client);
 			}
-		} else { // Sinon le taxi reste sur place.
-			attendreProchainClient();
+		} else { // Sinon on rentre à la centrale
+			rentrerALaCentrale();
 		}
 	}
 
@@ -314,8 +315,8 @@ public class Taxi {
 			} else { // Sinon on va le chercher
 				allerChercher(client);
 			}
-		} else { // Sinon le taxi reste sur place.
-			attendreProchainClient();
+		} else { // Sinon on rentre à la centrale
+			rentrerALaCentrale();
 		}
 	}
 
@@ -325,15 +326,28 @@ public class Taxi {
 	 * pris en charge soit déposé par le taxi.
 	 */
 	private void gererDestinationAtteinte() {
-		// Si le client prioritaire est arrivé à sa destination,
-		// il descend du taxi.
-		if (clientPrioritaire.getArrivee().equals(position)) {
-			deposer(clientPrioritaire);
+		// Si on est à vide, on attend sur place un nouveau client.
+		if (clientPrioritaire == null) {
+			attendreProchainClient();
 		} else {
-			// Sinon on est arrivé au point de départ du client
-			// et on le prend en charge.
-			prendreEnCharge(clientPrioritaire);
+			// Si le client prioritaire est arrivé à sa destination,
+			// il descend du taxi.
+			if (clientPrioritaire.getArrivee().equals(position)) {
+				deposer(clientPrioritaire);
+			} else {
+				// Sinon on est arrivé au point de départ du client
+				// et on le prend en charge.
+				prendreEnCharge(clientPrioritaire);
+			}
 		}
+	}
+
+	/**
+	 * Demande au taxi de rentrer à la centrale.
+	 */
+	private void rentrerALaCentrale() {
+		clientPrioritaire = null;
+		setDestination(centrale.getPosition());
 	}
 
 	/**

@@ -89,20 +89,18 @@ public class AffichageVille extends JPanel {
 		// Ils sont représentés par des carrés rouges.
 		g2D.setColor(Color.red);
 		for (Client c : listeClientsEnAttenteAffectationTaxi) {
-			g2D
-					.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2),
-							(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
-							(int) tailleBasePoint, (int) tailleBasePoint);
+			g2D.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2),
+					(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
+					(int) tailleBasePoint, (int) tailleBasePoint);
 		}
 
 		// Affichage des clients en attente de prise en charge par un taxi.
 		// Ils sont représentés par des carrés orange.
 		g2D.setColor(Color.orange);
 		for (Client c : listeClientsEnAttentePriseEnCharge) {
-			g2D
-					.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2),
-							(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
-							(int) tailleBasePoint, (int) tailleBasePoint);
+			g2D.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2),
+					(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
+					(int) tailleBasePoint, (int) tailleBasePoint);
 		}
 
 		double translateX;
