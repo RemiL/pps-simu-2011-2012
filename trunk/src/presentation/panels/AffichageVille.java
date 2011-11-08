@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D.Double;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
@@ -29,6 +30,8 @@ public class AffichageVille extends JPanel {
 	private LinkedList<Client> listeClientsEnAttenteAffectationTaxi, listeClientsEnAttentePriseEnCharge;
 	/** Le rayon de la ville */
 	private int rayonVille;
+	/** La position de la centrale de taxis */
+	private Double positionCentrale;
 	/** La liste des couleurs utilisés pour dessiner les chemins des taxis */
 	private Color[] listeColors = { Color.green, Color.blue, Color.cyan, Color.gray, Color.magenta, Color.orange,
 			Color.pink, Color.yellow };
@@ -42,10 +45,13 @@ public class AffichageVille extends JPanel {
 	 *            le nombre de taxis
 	 * @param rayon
 	 *            le rayon de la ville
+	 * @param positionCentrale
+	 *            la position de la centrale de taxis
 	 */
-	public AffichageVille(int nbTaxis, int rayon) {
+	public AffichageVille(int nbTaxis, int rayon, Double positionCentrale) {
 		super();
 
+		this.positionCentrale = positionCentrale;
 		rayonVille = rayon;
 		listePaths = new GeneralPath[nbTaxis];
 		listeTaxis = new Taxi[nbTaxis];
@@ -85,22 +91,28 @@ public class AffichageVille extends JPanel {
 		g2D.setColor(Color.white);
 		g2D.fillOval(posX, posY, (int) (rayonVille * 2 * scale), (int) (rayonVille * 2 * scale));
 
+		// Le carré noir représentant la centrale de taxis
+		g2D.setColor(Color.black);
+		g2D.fillRect((int) (positionCentrale.getX() * scale) - tailleBasePoint / 2 + this.getWidth() / 2,
+				(int) (positionCentrale.getY() * scale) - tailleBasePoint / 2 + this.getHeight() / 2, tailleBasePoint,
+				tailleBasePoint);
+
 		// Affichage des clients en attente d'affectation à un taxi.
 		// Ils sont représentés par des carrés rouges.
 		g2D.setColor(Color.red);
 		for (Client c : listeClientsEnAttenteAffectationTaxi) {
-			g2D.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2),
-					(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
-					(int) tailleBasePoint, (int) tailleBasePoint);
+			g2D.fillRect((int) (c.getDepart().getX() * scale - tailleBasePoint / 2 + this.getWidth() / 2), (int) (c
+					.getDepart().getY()
+					* scale - tailleBasePoint / 2 + this.getHeight() / 2), tailleBasePoint, tailleBasePoint);
 		}
 
 		// Affichage des clients en attente de prise en charge par un taxi.
 		// Ils sont représentés par des carrés orange.
 		g2D.setColor(Color.orange);
 		for (Client c : listeClientsEnAttentePriseEnCharge) {
-			g2D.fillRect((int) ((c.getDepart().getX()) * scale - tailleBasePoint / 2 + this.getWidth() / 2),
-					(int) ((c.getDepart().getY()) * scale - tailleBasePoint / 2 + this.getHeight() / 2),
-					(int) tailleBasePoint, (int) tailleBasePoint);
+			g2D.fillRect((int) (c.getDepart().getX() * scale - tailleBasePoint / 2 + this.getWidth() / 2), (int) (c
+					.getDepart().getY()
+					* scale - tailleBasePoint / 2 + this.getHeight() / 2), tailleBasePoint, tailleBasePoint);
 		}
 
 		double translateX;
@@ -122,8 +134,7 @@ public class AffichageVille extends JPanel {
 				g2D.setColor(listeColors[i % 8]);
 				g2D.draw(path);
 				g2D.fillOval((int) (path.getCurrentPoint().getX() - (tailleBasePoint / 2)), (int) (path
-						.getCurrentPoint().getY() - (tailleBasePoint / 2)), (int) tailleBasePoint,
-						(int) tailleBasePoint);
+						.getCurrentPoint().getY() - (tailleBasePoint / 2)), tailleBasePoint, tailleBasePoint);
 
 				// Affiche le nombre de clients qu'à le taxi
 				Font font = new Font("Arial", Font.BOLD, 15);

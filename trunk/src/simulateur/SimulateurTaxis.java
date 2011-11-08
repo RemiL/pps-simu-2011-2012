@@ -93,7 +93,7 @@ public class SimulateurTaxis implements ActionListener {
 		for (int rep = 0; rep < nbRepetitions && !stop; rep++) {
 			referentielTemps.reset();
 			centrale = new CentraleTaxis(referentielTemps, nbTaxis, positionCentrale, genVitesse, nbClientsMax);
-			fenetre.initAffichageVille(nbTaxis, rayonVille);
+			fenetre.initAffichageVille(nbTaxis, rayonVille, positionCentrale);
 
 			// On effectue la boucle n+1 fois puisque la première itération
 			// sert à l'initialisation, les taxis effectueront donc bien n
@@ -192,7 +192,8 @@ public class SimulateurTaxis implements ActionListener {
 					.get("Position x de la centrale (km)")) * 1000, Double.parseDouble(parametres
 					.get("Position y de la centrale (km)")) * 1000);
 			this.genApparitionClient = new GenApparitionsClientsPoisson(Double.parseDouble(parametres
-					.get("Lambda poisson (clients/h)")) / 3600 * referentielTemps.getDt());
+					.get("Lambda poisson (clients/h)"))
+					/ 3600 * referentielTemps.getDt());
 			this.genPositionArrivee = new GenPositionsArrivee(rayonVille, Double.parseDouble(parametres
 					.get("Rayon d'exclusion de l'arrivée (km)")) * 1000);
 			this.genPositionDepart = new GenPositionsDepart(rayonVille);
@@ -204,8 +205,8 @@ public class SimulateurTaxis implements ActionListener {
 					.get("Ecart type du temps d'attente supplémentaire (min)")) * 60);
 			this.genVitesse = new GenVitessesDistanceCentre(this.rayonVille, Double.parseDouble(parametres
 					.get("Vitesse dans le centre (km/h)")) * 1000 / 3600, Double.parseDouble(parametres
-					.get("Vitesse entre le centre et la périphérie (km/h)")) * 1000 / 3600,
-					Double.parseDouble(parametres.get("Vitesse en périphérie (km/h)")) * 1000 / 3600);
+					.get("Vitesse entre le centre et la périphérie (km/h)")) * 1000 / 3600, Double
+					.parseDouble(parametres.get("Vitesse en périphérie (km/h)")) * 1000 / 3600);
 
 			t = new Thread(new PlaySimulation());
 			t.start();
