@@ -2,6 +2,8 @@ package simulateur;
 
 import java.awt.geom.Point2D;
 
+import simulateur.generateurs.interfaces.GenerateurTempsAttente;
+
 /**
  * Classe représentant un client de la société de taxi.
  * 
@@ -24,9 +26,15 @@ public class Client {
 	private Point2D.Double depart, arrivee;
 	/**
 	 * L'horaire (dans le référentiel de temps partagé) après lequel le client
-	 * abandonne l'idée de prendre un taxi s'il n'a pas été pris en charge
+	 * abandonne l'idée de prendre un taxi
 	 */
 	private double horaireAbandon;
+	/**
+	 * Le générateur de temps d'attente permettant de tirer le temps d'attente
+	 * supplémentaire qu'est prêt à attendre le client quand la centrale de taxi
+	 * lui annonce qu'un véhicule va lui être envoyé
+	 */
+	private GenerateurTempsAttente genTempsAttenteSupplementaire;
 
 	/**
 	 * Enumération décrivant les états possibles du client.
@@ -51,14 +59,22 @@ public class Client {
 	 *            pour origine le centre de la ville
 	 * @param tempsAttente
 	 *            le temps d'attente après lequel le client abandonne l'idée de
-	 *            prendre un taxi
+	 *            prendre un taxi si la compagnie ne le rappelle pas pour le
+	 *            prévenir qu'on lui envoie un taxi
+	 * @param genTempsAttenteSupplementaire
+	 *            le générateur de temps d'attente permettant de tirer le temps
+	 *            d'attente supplémentaire qu'est prêt à attendre le client
+	 *            quand la centrale de taxi lui annonce qu'un véhicule va lui
+	 *            être envoyé
 	 */
-	public Client(ReferentielTemps referentielTemps, Point2D.Double depart, Point2D.Double arrivee, double tempsAttente) {
+	public Client(ReferentielTemps referentielTemps, Point2D.Double depart, Point2D.Double arrivee,
+			double tempsAttente, GenerateurTempsAttente genTempsAttenteSupplementaire) {
 		this.referentielTemps = referentielTemps;
 
 		this.depart = depart;
 		this.arrivee = arrivee;
 		this.horaireAbandon = referentielTemps.getTemps() + tempsAttente;
+		this.genTempsAttenteSupplementaire = genTempsAttenteSupplementaire;
 		this.etat = Etat.ATTENTE_ENVOI_TAXI;
 	}
 
@@ -87,12 +103,17 @@ public class Client {
 	}
 
 	/**
-	 * Signale au client l'envoi d'un taxi.
+	 * Signale au client l'envoi d'un taxi. Le client peut alors décider
+	 * d'attendre un peu plus longtemps avant d'abandonner l'idée de prendre un
+	 * taxi.
 	 */
 	public void signalerEnvoiTaxi() {
 		etat = Etat.ATTENTE_ARRIVEE_TAXI;
+
+		// On met à jour l'horaire d'abandon
+		horaireAbandon += genTempsAttenteSupplementaire.genererTempsAttente();
 	}
-	
+
 	/**
 	 * Teste si le client est toujours en train d'attendre l'arrivée de son
 	 * taxi.
