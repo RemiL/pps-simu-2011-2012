@@ -4,6 +4,8 @@ import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import simulateur.generateurs.interfaces.GenerateurVitesses;
+
 /**
  * Classe représentant une centrale de taxis.
  * 
@@ -47,14 +49,14 @@ public class CentraleTaxis {
 	 * @param position
 	 *            la position de la centrale dans le repère gradué en mètres
 	 *            ayant pour origine le centre de la ville
-	 * @param vitesse
-	 *            la vitesse des taxis
+	 * @param genVitesse
+	 *            le générateur de vitesse des taxis
 	 * @param nbClientsMax
 	 *            le nombre maximal de clients pouvant être transportés par un
 	 *            taxi
 	 */
-	public CentraleTaxis(ReferentielTemps referentielTemps, int nombreTaxis, Point2D.Double position, double vitesse,
-			int nbClientsMax) {
+	public CentraleTaxis(ReferentielTemps referentielTemps, int nombreTaxis, Point2D.Double position,
+			GenerateurVitesses genVitesse, int nbClientsMax) {
 		this.referentielTemps = referentielTemps;
 
 		this.position = position;
@@ -63,7 +65,7 @@ public class CentraleTaxis {
 		this.taxis = new Taxi[nombreTaxis];
 
 		for (int i = 0; i < nombreTaxis; i++) {
-			taxis[i] = new Taxi(referentielTemps, this, position, vitesse, nbClientsMax);
+			taxis[i] = new Taxi(referentielTemps, this, position, genVitesse, nbClientsMax);
 		}
 
 		this.nbClients = 0;

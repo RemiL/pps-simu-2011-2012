@@ -3,16 +3,17 @@ package simulateur;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 
+import simulateur.generateurs.interfaces.GenerateurVitesses;
 import utils.OutilsGeometriques;
 
 /**
  * Classe représentant un taxi rattaché à une centrale de taxis.
  * 
  * Un taxi est caractérisé par sa position actuelle et par sa destination ainsi
- * que par sa vitesse. Un taxi peut transporter à un même instant jusqu'à deux
- * clients mais il décide de se dérouter pour aller chercher un deuxième client
- * que dans les cas où cela a un sens, c'est-à-dire dans les cas où ça ne
- * rallonge pas outre mesure le trajet du premier client. Dans notre
+ * que par son générateur de vitesse. Un taxi peut transporter à un même instant
+ * jusqu'à deux clients mais il décide de se dérouter pour aller chercher un
+ * deuxième client que dans les cas où cela a un sens, c'est-à-dire dans les cas
+ * où ça ne rallonge pas outre mesure le trajet du premier client. Dans notre
  * implémentation, on a fait le choix de n'aller chercher un deuxième client que
  * si son point de départ et sa destination sont compris dans une bande
  * semi-infinie de largeur égale à un tiers de la distance restant à parcourir
@@ -39,10 +40,10 @@ public class Taxi {
 	 * pour origine le centre de la ville.
 	 */
 	private Point2D.Double destination;
-	/** La vitesse du taxi en m/s */
-	private double vitesse;
-	/** Les déplacements du taxi lors du prochain incrément de temps */
-	private double dX, dY;
+	/** Le générateur de vitesse du taxi */
+	private GenerateurVitesses genVitesse;
+	/** Les composantes du vecteur direction normalisé du taxi */
+	private double sigmaX, sigmaY;
 	/** La liste des clients affectés au taxi */
 	private LinkedList<Client> clients;
 	/** Le client concerné par la destination actuelle */
@@ -60,20 +61,20 @@ public class Taxi {
 	 * @param positionDepart
 	 *            la position de départ du taxi dans le répère gradué en mètres
 	 *            ayant pour origine le centre de la ville
-	 * @param vitesse
-	 *            la vitesse du taxi
+	 * @param genVitesse
+	 *            le générateur de vitesse du taxi
 	 * @param nbClientsMax
 	 *            le nombre de clients max
 	 */
 	public Taxi(ReferentielTemps referentielTemps, CentraleTaxis centrale, Point2D.Double positionDepart,
-			double vitesse, int nbClientsMax) {
+			GenerateurVitesses genVitesse, int nbClientsMax) {
 		this.referentielTemps = referentielTemps;
 
 		this.centrale = centrale;
 		this.position = new Point2D.Double();
 		this.position.setLocation(positionDepart);
-		this.vitesse = vitesse;
-		this.dX = this.dY = 0.0;
+		this.genVitesse = genVitesse;
+		this.sigmaX = this.sigmaY = 0.0;
 		this.clients = new LinkedList<Client>();
 		this.nbClientsMax = nbClientsMax;
 	}
@@ -194,8 +195,8 @@ public class Taxi {
 		if (destination != null) {
 			// On calcule les déplacements à effectuer
 			// sur x et y à chaque déplacement.
-			dX = vitesse * (destination.x - position.x) / position.distance(destination) * referentielTemps.getDt();
-			dY = vitesse * (destination.y - position.y) / position.distance(destination) * referentielTemps.getDt();
+			sigmaX = (destination.x - position.x) / position.distance(destination);
+			sigmaY = (destination.y - position.y) / position.distance(destination);
 		}
 	}
 
@@ -350,16 +351,18 @@ public class Taxi {
 	 */
 	public void rouler(/* TODO : vitesse ? */) {
 		if (destination != null) { // Si on a une destination
+			double distance = genVitesse.genererVitesse(position) * referentielTemps.getDt();
+
 			// On vérifie si elle est atteinte lors du prochain déplacement
-			if (position.distance(destination) <= vitesse * referentielTemps.getDt()) {
+			if (position.distance(destination) <= distance) {
 				// Si la destination est atteinte on s'y arrête
 				position = destination;
 				// et on décide de l'action à effectuer à la prochaine itération
 				gererDestinationAtteinte();
 			} else {
 				// Si on n'est pas encore arrivé, on effectue le déplacement
-				position.x += dX;
-				position.y += dY;
+				position.x += sigmaX * distance;
+				position.y += sigmaY * distance;
 			}
 		}
 	}
