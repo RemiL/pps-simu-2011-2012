@@ -96,7 +96,6 @@ public class AffichageVille extends JPanel {
 		g2D.fillRect((int) (positionCentrale.getX() * scale) - tailleBasePoint / 2 + this.getWidth() / 2,
 				(int) (positionCentrale.getY() * scale) - tailleBasePoint / 2 + this.getHeight() / 2, tailleBasePoint,
 				tailleBasePoint);
-
 		// Affichage des clients en attente d'affectation à un taxi.
 		// Ils sont représentés par des carrés rouges.
 		g2D.setColor(Color.red);

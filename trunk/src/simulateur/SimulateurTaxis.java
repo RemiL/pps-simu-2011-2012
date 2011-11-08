@@ -54,6 +54,7 @@ public class SimulateurTaxis implements ActionListener {
 		fenetre.getBoutonResultat().addActionListener(this);
 		fenetre.getBoutonNouvelleSimulation().addActionListener(this);
 		fenetre.getBoutonResimuler().addActionListener(this);
+		fenetre.getBoutonStopSansAnime().addActionListener(this);
 	}
 
 	public void configurer() {
@@ -86,7 +87,9 @@ public class SimulateurTaxis implements ActionListener {
 		pourcentageClientsSatisfaits = 0;
 		stop = false;
 		play = true;
-		fenetre.changeBoutonPausePlay(play, stop);
+
+		if (accelerationAnimation != 0.0)
+			fenetre.changeBoutonPausePlay(play, stop);
 
 		// On réalise un certain nombre de fois la simulation
 		// pour avoir une moyenne
@@ -96,6 +99,8 @@ public class SimulateurTaxis implements ActionListener {
 
 			if (accelerationAnimation != 0.0)
 				fenetre.initAffichageVille(nbTaxis, rayonVille, positionCentrale);
+			else
+				fenetre.afficherSimulationEnCours();
 
 			// On effectue la boucle n+1 fois puisque la première itération
 			// sert à l'initialisation, les taxis effectueront donc bien n
@@ -134,11 +139,6 @@ public class SimulateurTaxis implements ActionListener {
 					/ centrale.getNbClients();
 		}
 		pourcentageClientsSatisfaits /= nbRepetitions;
-
-		if(accelerationAnimation != 0.0)
-			fenetre.finaliserSimulation();
-		else
-			fenetre.afficherResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, nbTaxis);
 	}
 
 	private void simulerApparitionClients() {
@@ -163,7 +163,19 @@ public class SimulateurTaxis implements ActionListener {
 		do {
 			this.nbTaxis++;
 			simuler();
-		} while (pourcentageClientsSatisfaits < pourcentageClientsSatisfaitsRequis);
+		} while (pourcentageClientsSatisfaits <= pourcentageClientsSatisfaitsRequis && !stop);
+		if (accelerationAnimation != 0.0)
+			fenetre.finaliserSimulation();
+		else
+			fenetre.afficherResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, nbTaxis);
+	}
+
+	private void chercherPourcentageSatisfait() {
+		simuler();
+		if (accelerationAnimation != 0.0)
+			fenetre.finaliserSimulation();
+		else
+			fenetre.afficherResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, nbTaxis);
 	}
 
 	public static void main(String[] args) {
@@ -231,6 +243,9 @@ public class SimulateurTaxis implements ActionListener {
 			t.interrupt();
 			t = new Thread(new PlaySimulation());
 			t.start();
+		} else if (arg0.getSource() == fenetre.getBoutonStopSansAnime()) {
+			stop = true;
+			fenetre.afficherResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, nbTaxis);
 		}
 	}
 
@@ -239,7 +254,7 @@ public class SimulateurTaxis implements ActionListener {
 			if (typeSimulation == 0) {
 				chercherNbTaxisNecessaires();
 			} else if (typeSimulation == 1) {
-				simuler();
+				chercherPourcentageSatisfait();
 			}
 		}
 	}
