@@ -55,8 +55,8 @@ public class AffichageInit extends JTabbedPane {
 	 * @param widths2
 	 *            la tailles des seconds champs
 	 */
-	public AffichageInit(String[] labels1, String[] defaults1, int[] widths1,
-			String[] labels2, String[] defaults2, int[] widths2) {
+	public AffichageInit(String[] labels1, String[] defaults1, int[] widths1, String[] labels2, String[] defaults2,
+			int[] widths2) {
 		super();
 
 		tabNbTaxis = new JPanel(new BorderLayout());
@@ -116,8 +116,7 @@ public class AffichageInit extends JTabbedPane {
 		}
 
 		this.addTab("Chercher le nombre de taxis", tabNbTaxis);
-		this.addTab("Calculer le pourcentage de clients pris en charge",
-				tabNbClients);
+		this.addTab("Calculer le pourcentage de clients pris en charge", tabNbClients);
 	}
 
 	/**
