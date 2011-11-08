@@ -8,7 +8,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;

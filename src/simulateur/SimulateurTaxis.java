@@ -93,7 +93,9 @@ public class SimulateurTaxis implements ActionListener {
 		for (int rep = 0; rep < nbRepetitions && !stop; rep++) {
 			referentielTemps.reset();
 			centrale = new CentraleTaxis(referentielTemps, nbTaxis, positionCentrale, genVitesse, nbClientsMax);
-			fenetre.initAffichageVille(nbTaxis, rayonVille, positionCentrale);
+
+			if (accelerationAnimation != 0.0)
+				fenetre.initAffichageVille(nbTaxis, rayonVille, positionCentrale);
 
 			// On effectue la boucle n+1 fois puisque la première itération
 			// sert à l'initialisation, les taxis effectueront donc bien n
@@ -110,9 +112,11 @@ public class SimulateurTaxis implements ActionListener {
 					// On incrémente l'horloge.
 					referentielTemps.incrementerTemps();
 
-					fenetre.setInfos(i, nbTaxis, rep);
-					fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsEnAttenteAffectationTaxi(),
-							centrale.getClientsEnAttentePriseEnCharge());
+					if (accelerationAnimation != 0.0) {
+						fenetre.setInfos(i, nbTaxis, rep);
+						fenetre.setAffichageVille(centrale.getTaxis(), centrale.getClientsEnAttenteAffectationTaxi(),
+								centrale.getClientsEnAttentePriseEnCharge());
+					}
 				} else {
 					i--;
 				}
@@ -131,7 +135,10 @@ public class SimulateurTaxis implements ActionListener {
 		}
 		pourcentageClientsSatisfaits /= nbRepetitions;
 
-		fenetre.finaliserSimulation();
+		if(accelerationAnimation != 0.0)
+			fenetre.finaliserSimulation();
+		else
+			fenetre.afficherResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, nbTaxis);
 	}
 
 	private void simulerApparitionClients() {
@@ -167,7 +174,7 @@ public class SimulateurTaxis implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		if (arg0.getSource() == fenetre.getBoutonSimuler()) {
 			this.parametres = fenetre.getValues();
-			typeSimulation = fenetre.getSimulationType();
+			this.typeSimulation = fenetre.getSimulationType();
 
 			this.nbEchantillons = Integer.parseInt(parametres.get("Nombre d'échantillons"));
 			this.dureeSimulation = Double.parseDouble(parametres.get("Durée de la simulation (h)")) * 3600;
@@ -217,7 +224,7 @@ public class SimulateurTaxis implements ActionListener {
 			play = !play;
 			fenetre.changeBoutonPausePlay(play, stop);
 		} else if (arg0.getSource() == fenetre.getBoutonResultat()) {
-			fenetre.afficherResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, this.nbTaxis);
+			fenetre.afficherResultat(parametres, typeSimulation, pourcentageClientsSatisfaits, nbTaxis);
 		} else if (arg0.getSource() == fenetre.getBoutonNouvelleSimulation()) {
 			this.configurer();
 		} else if (arg0.getSource() == fenetre.getBoutonResimuler()) {
