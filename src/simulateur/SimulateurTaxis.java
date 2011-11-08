@@ -35,6 +35,7 @@ public class SimulateurTaxis implements ActionListener {
 	private GenerateurPositionsDepart genPositionDepart;
 	private GenerateurPositionsArrivee genPositionArrivee;
 	private GenerateurTempsAttente genTempsAttente;
+	private GenerateurTempsAttente genTempsAttenteSuppl;
 	private HashMap<String, String> parametres;
 
 	private Fenetre fenetre;
@@ -56,19 +57,24 @@ public class SimulateurTaxis implements ActionListener {
 	public void configurer() {
 		String[] labels1 = { "Nombre d'échantillons", "Durée de la simulation (h)", "Rayon de la ville (km)",
 				"Position x de la centrale (km)", "Position y de la centrale (km)", "Vitesse des taxis (km/h)",
-				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)", "Temps d'attente moyen (min)",
-				"Ecart type du temps d'attente (min)", "Nombre de clients max par taxi",
-				"Pourcentage de clients satisfaits", "Nombre de répétitions",
+				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)",
+				"Temps d'attente moyen initial (min)", "Ecart type du temps d'attente initial (min)",
+				"Temps d'attente moyen supplémentaire (min)", "Ecart type du temps d'attente supplémentaire (min)",
+				"Nombre de clients max par taxi", "Pourcentage de clients satisfaits", "Nombre de répétitions",
 				"Accélération de l'animation (0 pour aucune animation)" };
-		String[] defaults1 = { "10000", "2", "10", "0", "0", "45", "10", "1", "20", "10", "2", "80", "1", "100" };
-		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+		int[] widths1 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+		String[] defaults1 = { "10000", "2", "10", "0", "0", "45", "10", "1", "20", "10", "10", "5", "2", "80", "1",
+				"100" };
 		String[] labels2 = { "Nombre d'échantillons", "Durée de la simulation (h)", "Rayon de la ville (km)",
 				"Position x de la centrale (km)", "Position y de la centrale (km)", "Vitesse des taxis (km/h)",
-				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)", "Temps d'attente moyen (min)",
-				"Ecart type du temps d'attente (min)", "Nombre de taxis", "Nombre de clients max par taxi",
-				"Nombre de répétitions", "Accélération de l'animation (0 pour aucune animation)" };
-		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-		String[] defaults2 = { "10000", "2", "10", "0", "0", "45", "10", "1", "20", "10", "2", "2", "1", "100" };
+				"Lambda poisson (clients/h)", "Rayon d'exclusion de l'arrivée (km)",
+				"Temps d'attente moyen initial (min)", "Ecart type du temps d'attente initial (min)",
+				"Temps d'attente moyen supplémentaire (min)", "Ecart type du temps d'attente supplémentaire (min)",
+				"Nombre de taxis", "Nombre de clients max par taxi", "Nombre de répétitions",
+				"Accélération de l'animation (0 pour aucune animation)" };
+		int[] widths2 = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+		String[] defaults2 = { "10000", "2", "10", "0", "0", "45", "10", "1", "20", "10", "10", "5", "2", "2", "1",
+				"100" };
 		fenetre.initAffichageInit(labels1, defaults1, widths1, labels2, defaults2, widths2);
 	}
 
@@ -128,14 +134,15 @@ public class SimulateurTaxis implements ActionListener {
 		int nbClients = genApparitionClient.genererNombreApparitionsClients();
 		Point2D.Double ptDepart;
 		Point2D.Double ptArrivee;
-		double tempsAttenteMax;
+		double tempsAttenteInitial;
 
 		for (int i = 0; i < nbClients; i++) {
 			ptDepart = genPositionDepart.genererPositionDepart();
 			ptArrivee = genPositionArrivee.genererPositionArrivee(ptDepart);
-			tempsAttenteMax = genTempsAttente.genererTempsAttente();
+			tempsAttenteInitial = genTempsAttente.genererTempsAttente();
 
-			centrale.ajouterClient(new Client(referentielTemps, ptDepart, ptArrivee, tempsAttenteMax));
+			centrale.ajouterClient(new Client(referentielTemps, ptDepart, ptArrivee, tempsAttenteInitial,
+					genTempsAttenteSuppl));
 		}
 	}
 
@@ -187,8 +194,11 @@ public class SimulateurTaxis implements ActionListener {
 					.get("Rayon d'exclusion de l'arrivée (km)")) * 1000);
 			this.genPositionDepart = new GenPositionsDepart(rayonVille);
 			this.genTempsAttente = new GenTempsAttenteGaussien(Double.parseDouble(parametres
-					.get("Temps d'attente moyen (min)")) * 60, Double.parseDouble(parametres
-					.get("Ecart type du temps d'attente (min)")) * 60);
+					.get("Temps d'attente moyen initial (min)")) * 60, Double.parseDouble(parametres
+					.get("Ecart type du temps d'attente initial (min)")) * 60);
+			this.genTempsAttenteSuppl = new GenTempsAttenteGaussien(Double.parseDouble(parametres
+					.get("Temps d'attente moyen supplémentaire (min)")) * 60, Double.parseDouble(parametres
+					.get("Ecart type du temps d'attente supplémentaire (min)")) * 60);
 
 			t = new Thread(new PlaySimulation());
 			t.start();
