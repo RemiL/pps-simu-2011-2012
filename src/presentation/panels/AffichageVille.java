@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.LinkedList;
 
@@ -31,7 +32,7 @@ public class AffichageVille extends JPanel {
 	/** Le rayon de la ville */
 	private int rayonVille;
 	/** La position de la centrale de taxis */
-	private Double positionCentrale;
+	private Point2D.Double positionCentrale;
 	/** La liste des couleurs utilisés pour dessiner les chemins des taxis */
 	private Color[] listeColors = { Color.green, Color.blue, Color.cyan, Color.gray, Color.magenta, Color.orange,
 			Color.pink, Color.yellow };
@@ -48,7 +49,7 @@ public class AffichageVille extends JPanel {
 	 * @param positionCentrale
 	 *            la position de la centrale de taxis
 	 */
-	public AffichageVille(int nbTaxis, int rayon, Double positionCentrale) {
+	public AffichageVille(int nbTaxis, int rayon, Point2D.Double positionCentrale) {
 		super();
 
 		this.positionCentrale = positionCentrale;
