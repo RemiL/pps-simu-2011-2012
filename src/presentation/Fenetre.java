@@ -65,7 +65,7 @@ public class Fenetre extends JFrame {
 		boutonNouvelleSimulation = new JButton("Nouvelle simulation");
 		boutonResimuler = new JButton("Relancer");
 		boutonStopSansAnime = new JButton("Stop");
-		
+
 		panBas = new JPanel();
 	}
 
@@ -121,7 +121,7 @@ public class Fenetre extends JFrame {
 		this.getContentPane().add(affichageInfos, BorderLayout.NORTH);
 
 		panBas.removeAll();
-		
+
 		panBas.add(boutonPausePlay);
 		panBas.add(boutonStop);
 
@@ -254,11 +254,13 @@ public class Fenetre extends JFrame {
 	public JButton getBoutonResimuler() {
 		return boutonResimuler;
 	}
-	
+
 	/**
-	 * Return l'instance du bouton pour stopper la simulation quand il n'y a pas d'animation
+	 * Return l'instance du bouton pour stopper la simulation quand il n'y a pas
+	 * d'animation
 	 * 
-	 * @return l'instance du bouton pour stopper la simulation quand il n'y a pas d'animation
+	 * @return l'instance du bouton pour stopper la simulation quand il n'y a
+	 *         pas d'animation
 	 */
 	public JButton getBoutonStopSansAnime() {
 		return boutonStopSansAnime;

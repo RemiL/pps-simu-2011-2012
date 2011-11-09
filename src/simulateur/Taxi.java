@@ -41,6 +41,8 @@ public class Taxi {
 	 * pour origine le centre de la ville.
 	 */
 	private Point2D.Double destination;
+	/** Indique si la destination du taxi a été modifiée récemment */
+	private boolean destinationModifiee;
 	/** Le générateur de vitesse du taxi */
 	private GenerateurVitesses genVitesse;
 	/** Les composantes du vecteur direction normalisé du taxi */
@@ -74,6 +76,7 @@ public class Taxi {
 		this.centrale = centrale;
 		this.position = new Point2D.Double();
 		this.position.setLocation(positionDepart);
+		this.destinationModifiee = false;
 		this.genVitesse = genVitesse;
 		this.sigmaX = this.sigmaY = 0.0;
 		this.clients = new LinkedList<Client>();
@@ -190,8 +193,10 @@ public class Taxi {
 	 *            la nouvelle destination du taxi
 	 */
 	private void setDestination(Point2D.Double destination) {
-		// On modifie la destination de notre taxi.
+		// On modifie la destination de notre taxi
 		this.destination = destination;
+		// et on marque la destination comme modifiée.
+		destinationModifiee = true;
 
 		if (destination != null) {
 			// On calcule les déplacements à effectuer
@@ -413,6 +418,22 @@ public class Taxi {
 			if (c.estPrisEnCharge())
 				res++;
 		}
+		return res;
+	}
+
+	/**
+	 * Teste si le taxi a changé de direction depuis le dernier appel à cette
+	 * méthode.
+	 * 
+	 * @return vrai si et seulement si le taxi a changé de direction depuis le
+	 *         dernier appel à cette méthode
+	 */
+	public boolean isDestinationModifiee() {
+		boolean res = destinationModifiee;
+
+		// On marque la destination comme non modifiée récemment
+		destinationModifiee = false;
+
 		return res;
 	}
 }
