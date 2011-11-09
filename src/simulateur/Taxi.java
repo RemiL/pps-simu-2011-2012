@@ -375,7 +375,7 @@ public class Taxi {
 			// On vérifie si elle est atteinte lors du prochain déplacement
 			if (position.distance(destination) <= distance) {
 				// Si la destination est atteinte on s'y arrête
-				position = destination;
+				position.setLocation(destination);
 				// et on décide de l'action à effectuer à la prochaine itération
 				gererDestinationAtteinte();
 			} else {
