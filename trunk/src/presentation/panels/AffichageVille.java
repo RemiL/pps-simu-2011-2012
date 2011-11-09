@@ -29,15 +29,14 @@ public class AffichageVille extends JPanel {
 	/** La liste des taxis */
 	private Taxi[] listeTaxis;
 	/** Les liste des clients */
-	private LinkedList<Client> listeClientsEnAttenteAffectationTaxi,
-			listeClientsEnAttentePriseEnCharge;
+	private LinkedList<Client> listeClientsEnAttenteAffectationTaxi, listeClientsEnAttentePriseEnCharge;
 	/** Le rayon de la ville */
 	private int rayonVille;
 	/** La position de la centrale de taxis */
 	private Point2D.Double positionCentrale;
 	/** La liste des couleurs utilisés pour dessiner les chemins des taxis */
-	private Color[] listeColors = { Color.green, Color.blue, Color.cyan,
-			Color.gray, Color.magenta, Color.orange, Color.pink, Color.yellow };
+	private Color[] listeColors = { Color.green, Color.blue, Color.cyan, Color.gray, Color.magenta, Color.orange,
+			Color.pink, Color.yellow };
 	/** La taille basique d'un point sans mise à l'échelle */
 	private int tailleBasePoint;
 
@@ -51,15 +50,13 @@ public class AffichageVille extends JPanel {
 	 * @param positionCentrale
 	 *            la position de la centrale de taxis
 	 */
-	public AffichageVille(int nbTaxis, int rayon,
-			Point2D.Double positionCentrale) {
+	public AffichageVille(int nbTaxis, int rayon, Point2D.Double positionCentrale) {
 		super();
 
 		this.positionCentrale = new Point2D.Double(positionCentrale.x, positionCentrale.y);
 		rayonVille = rayon;
 		listePaths = new GeneralPath[nbTaxis];
 		listeLines = new GeneralPath[nbTaxis];
-		listeTaxis = new Taxi[nbTaxis];
 		tailleBasePoint = 6;
 	}
 
@@ -77,10 +74,8 @@ public class AffichageVille extends JPanel {
 			taille = this.getHeight();
 
 		// Pour améliorer le rendu
-		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		g2D.setRenderingHint(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_QUALITY);
+		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
 		// le ratio de mise à l'échelle pour que le cercle réprésantant la ville
 		// prenne toute la place possible
@@ -96,34 +91,29 @@ public class AffichageVille extends JPanel {
 
 		// Le cercle blanc représentant la ville
 		g2D.setColor(Color.white);
-		g2D.fillOval(posX, posY, (int) (rayonVille * 2 * scale),
-				(int) (rayonVille * 2 * scale));
+		g2D.fillOval(posX, posY, (int) (rayonVille * 2 * scale), (int) (rayonVille * 2 * scale));
 
 		// Le carré noir représentant la centrale de taxis
 		g2D.setColor(Color.black);
-		g2D.fillRect((int) (positionCentrale.getX() * scale) - tailleBasePoint
-				/ 2 + this.getWidth() / 2,
-				(int) (positionCentrale.getY() * scale) - tailleBasePoint / 2
-						+ this.getHeight() / 2, tailleBasePoint,
+		g2D.fillRect((int) (positionCentrale.getX() * scale) - tailleBasePoint / 2 + this.getWidth() / 2,
+				(int) (positionCentrale.getY() * scale) - tailleBasePoint / 2 + this.getHeight() / 2, tailleBasePoint,
 				tailleBasePoint);
 		// Affichage des clients en attente d'affectation à un taxi.
 		// Ils sont représentés par des carrés rouges.
 		g2D.setColor(Color.red);
 		for (Client c : listeClientsEnAttenteAffectationTaxi) {
-			g2D.fillRect((int) (c.getDepart().getX() * scale - tailleBasePoint
-					/ 2 + this.getWidth() / 2), (int) (c.getDepart().getY()
-					* scale - tailleBasePoint / 2 + this.getHeight() / 2),
-					tailleBasePoint, tailleBasePoint);
+			g2D.fillRect((int) (c.getDepart().getX() * scale - tailleBasePoint / 2 + this.getWidth() / 2), (int) (c
+					.getDepart().getY() * scale - tailleBasePoint / 2 + this.getHeight() / 2), tailleBasePoint,
+					tailleBasePoint);
 		}
 
 		// Affichage des clients en attente de prise en charge par un taxi.
 		// Ils sont représentés par des carrés orange.
 		g2D.setColor(Color.orange);
 		for (Client c : listeClientsEnAttentePriseEnCharge) {
-			g2D.fillRect((int) (c.getDepart().getX() * scale - tailleBasePoint
-					/ 2 + this.getWidth() / 2), (int) (c.getDepart().getY()
-					* scale - tailleBasePoint / 2 + this.getHeight() / 2),
-					tailleBasePoint, tailleBasePoint);
+			g2D.fillRect((int) (c.getDepart().getX() * scale - tailleBasePoint / 2 + this.getWidth() / 2), (int) (c
+					.getDepart().getY() * scale - tailleBasePoint / 2 + this.getHeight() / 2), tailleBasePoint,
+					tailleBasePoint);
 		}
 
 		double translateX;
@@ -134,36 +124,28 @@ public class AffichageVille extends JPanel {
 			if (listePaths[i] != null) {
 				// Met le chemin à l'échelle
 				GeneralPath path = (GeneralPath) listePaths[i].clone();
-				translateX = path.getCurrentPoint().getX()
-						- listePaths[i].getCurrentPoint().getX()
-						+ this.getWidth() / 2;
-				translateY = path.getCurrentPoint().getY()
-						- listePaths[i].getCurrentPoint().getY()
-						+ this.getHeight() / 2;
-				path.transform(new AffineTransform(scale, 0, 0, scale,
-						translateX, translateY));
+				translateX = path.getCurrentPoint().getX() - listePaths[i].getCurrentPoint().getX() + this.getWidth()
+						/ 2;
+				translateY = path.getCurrentPoint().getY() - listePaths[i].getCurrentPoint().getY() + this.getHeight()
+						/ 2;
+				path.transform(new AffineTransform(scale, 0, 0, scale, translateX, translateY));
 
 				GeneralPath line = (GeneralPath) listeLines[i].clone();
-				line.transform(new AffineTransform(scale, 0, 0, scale,
-						translateX, translateY));
+				line.transform(new AffineTransform(scale, 0, 0, scale, translateX, translateY));
 
 				// Un chemin est représenté par des lignes de couleur avec au
 				// bout un point représentant la position actuelle du taxi
 				g2D.setColor(listeColors[i % 8]);
 				g2D.draw(path);
 				g2D.draw(line);
-				g2D.fillOval(
-						(int) (path.getCurrentPoint().getX() - (tailleBasePoint / 2)),
-						(int) (path.getCurrentPoint().getY() - (tailleBasePoint / 2)),
-						tailleBasePoint, tailleBasePoint);
+				g2D.fillOval((int) (path.getCurrentPoint().getX() - (tailleBasePoint / 2)), (int) (path
+						.getCurrentPoint().getY() - (tailleBasePoint / 2)), tailleBasePoint, tailleBasePoint);
 
 				// Affiche le nombre de clients qu'à le taxi
 				Font font = new Font("Arial", Font.BOLD, 15);
 				g2D.setFont(font);
-				g2D.drawString("(" + listeTaxis[i].getNbClientsDansTaxi()
-						+ ", " + listeTaxis[i].getNbClientsAffectes() + ")",
-						(int) (path.getCurrentPoint().getX() + 5), (int) (path
-								.getCurrentPoint().getY() + 5));
+				g2D.drawString("(" + listeTaxis[i].getNbClientsDansTaxi() + ", " + listeTaxis[i].getNbClientsAffectes()
+						+ ")", (int) (path.getCurrentPoint().getX() + 5), (int) (path.getCurrentPoint().getY() + 5));
 			}
 		}
 	}
@@ -182,21 +164,22 @@ public class AffichageVille extends JPanel {
 			// complété
 			if (listePaths[i] == null) {
 				listePaths[i] = new GeneralPath();
-				listePaths[i].moveTo(taxis[i].getPosition().x, taxis[i].getPosition().y);
+				listePaths[i].moveTo(taxis[i].getPosition().getX(), taxis[i].getPosition().getY());
 				listeLines[i] = new GeneralPath();
-				listeLines[i].moveTo(taxis[i].getPosition().x, taxis[i].getPosition().y);
+				listeLines[i].moveTo(taxis[i].getPosition().getX(), taxis[i].getPosition().getY());
 			} else {
-				if(!taxis[i].isChangementDestination()) {
-					listeLines[i].lineTo(taxis[i].getPosition().x, taxis[i].getPosition().y);
-				}
-				else {
-					listePaths[i].lineTo(listeLines[i].getCurrentPoint().getX(), listeLines[i].getCurrentPoint().getY());
+				if (!taxis[i].isDestinationModifiee()) {
+					listeLines[i].lineTo(taxis[i].getPosition().getX(), taxis[i].getPosition().getY());
+				} else {
+					listePaths[i]
+							.lineTo(listeLines[i].getCurrentPoint().getX(), listeLines[i].getCurrentPoint().getY());
 					listeLines[i] = new GeneralPath();
-					listeLines[i].moveTo(listePaths[i].getCurrentPoint().getX(), listePaths[i].getCurrentPoint().getY());
-					listeLines[i].lineTo(taxis[i].getPosition().x, taxis[i].getPosition().y);
+					listeLines[i]
+							.moveTo(listePaths[i].getCurrentPoint().getX(), listePaths[i].getCurrentPoint().getY());
+					listeLines[i].lineTo(taxis[i].getPosition().getX(), taxis[i].getPosition().getY());
 				}
 			}
-			
+
 		}
 	}
 
