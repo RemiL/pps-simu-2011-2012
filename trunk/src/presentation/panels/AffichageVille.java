@@ -103,8 +103,8 @@ public class AffichageVille extends JPanel {
 		g2D.setColor(Color.red);
 		for (Client c : listeClientsEnAttenteAffectationTaxi) {
 			g2D.fillRect((int) (c.getDepart().getX() * scale - tailleBasePoint / 2 + this.getWidth() / 2), (int) (c
-					.getDepart().getY() * scale - tailleBasePoint / 2 + this.getHeight() / 2), tailleBasePoint,
-					tailleBasePoint);
+					.getDepart().getY()
+					* scale - tailleBasePoint / 2 + this.getHeight() / 2), tailleBasePoint, tailleBasePoint);
 		}
 
 		// Affichage des clients en attente de prise en charge par un taxi.
@@ -112,8 +112,8 @@ public class AffichageVille extends JPanel {
 		g2D.setColor(Color.orange);
 		for (Client c : listeClientsEnAttentePriseEnCharge) {
 			g2D.fillRect((int) (c.getDepart().getX() * scale - tailleBasePoint / 2 + this.getWidth() / 2), (int) (c
-					.getDepart().getY() * scale - tailleBasePoint / 2 + this.getHeight() / 2), tailleBasePoint,
-					tailleBasePoint);
+					.getDepart().getY()
+					* scale - tailleBasePoint / 2 + this.getHeight() / 2), tailleBasePoint, tailleBasePoint);
 		}
 
 		double translateX;
@@ -138,14 +138,14 @@ public class AffichageVille extends JPanel {
 				g2D.setColor(listeColors[i % 8]);
 				g2D.draw(path);
 				g2D.draw(line);
-				g2D.fillOval((int) (path.getCurrentPoint().getX() - (tailleBasePoint / 2)), (int) (path
+				g2D.fillOval((int) (line.getCurrentPoint().getX() - (tailleBasePoint / 2)), (int) (line
 						.getCurrentPoint().getY() - (tailleBasePoint / 2)), tailleBasePoint, tailleBasePoint);
 
 				// Affiche le nombre de clients qu'à le taxi
 				Font font = new Font("Arial", Font.BOLD, 15);
 				g2D.setFont(font);
 				g2D.drawString("(" + listeTaxis[i].getNbClientsDansTaxi() + ", " + listeTaxis[i].getNbClientsAffectes()
-						+ ")", (int) (path.getCurrentPoint().getX() + 5), (int) (path.getCurrentPoint().getY() + 5));
+						+ ")", (int) (line.getCurrentPoint().getX() + 5), (int) (line.getCurrentPoint().getY() + 5));
 			}
 		}
 	}
