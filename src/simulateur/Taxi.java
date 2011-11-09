@@ -90,10 +90,10 @@ public class Taxi {
 	 * client. Au contraire, s'il est déjà affecté au maximum de clients, il est
 	 * toujours considéré comme non disponible quelque soit le client. Dans le
 	 * cas où le taxi est affecté à un client, il est considéré comme disponible
-	 * pour un nème client uniquement si les points de départ et d'arrivée du
-	 * nouveau client sont compris dans une bande semie-infinie autour de la
-	 * trajectoire de la course courante, de largueur égale à un tiers de la
-	 * distance restant à parcourir pour la course actuelle.
+	 * pour un nème client uniquement si : - Le point de départ est après
+	 * l'arrivée du client déjà affecté - Le point de départ est dans une bande
+	 * autour de la trajectoire du taxi vers la destination du premier client,
+	 * l'arrivée est dans cette bande ou après l'arrivée du premier client
 	 * 
 	 * @param client
 	 *            le client pour lequel on souhaite vérifier la disponibilité du
@@ -119,8 +119,8 @@ public class Taxi {
 
 			// Si le départ du nouveau client est après l'arrivée du client
 			// courant on accepte toujours le nouveau client
-			if (OutilsGeometriques.produitScalaire(clientPrioritaire.getArrivee(), vectDirArrivee,
-					clientPrioritaire.getArrivee(), client.getDepart()) >= 0) {
+			if (OutilsGeometriques.produitScalaire(clientPrioritaire.getArrivee(), vectDirArrivee, clientPrioritaire
+					.getArrivee(), client.getDepart()) >= 0) {
 				estDispo = true;
 			} else {
 				// Si le premier client n'est pas encore pris en charge, on
@@ -134,8 +134,8 @@ public class Taxi {
 				// défini ci-dessus et l'arrivée du premier client. La largueur
 				// de la bande considérée est de deux tiers de la distance entre
 				// le point de départ considéré et l'arrivée du premier client.
-				if (OutilsGeometriques.distanceDroitePointCarre(ptDepartBande, clientPrioritaire.getArrivee(),
-						client.getDepart()) * 9 <= ptDepartBande.distanceSq(clientPrioritaire.getArrivee())
+				if (OutilsGeometriques.distanceDroitePointCarre(ptDepartBande, clientPrioritaire.getArrivee(), client
+						.getDepart()) * 9 <= ptDepartBande.distanceSq(clientPrioritaire.getArrivee())
 						&& OutilsGeometriques.produitScalaire(ptDepartBande, clientPrioritaire.getArrivee(),
 								ptDepartBande, client.getDepart()) >= 0) {
 					// On doit maintenant vérifier que l'arrivée du nouveau
@@ -143,15 +143,15 @@ public class Taxi {
 					// ou dans le demi plan après l'arrivée du premier client
 					if ((OutilsGeometriques.distanceDroitePointCarre(ptDepartBande, clientPrioritaire.getArrivee(),
 							client.getArrivee()) * 9 <= ptDepartBande.distanceSq(clientPrioritaire.getArrivee()) && OutilsGeometriques
-							.produitScalaire(ptDepartBande, clientPrioritaire.getArrivee(), ptDepartBande,
-									client.getArrivee()) >= 0)
+							.produitScalaire(ptDepartBande, clientPrioritaire.getArrivee(), ptDepartBande, client
+									.getArrivee()) >= 0)
 							|| OutilsGeometriques.produitScalaire(clientPrioritaire.getArrivee(), vectDirArrivee,
 									clientPrioritaire.getArrivee(), client.getArrivee()) >= 0) {
 						// On souhaite ensuite que l'arrivée du nouveau soit
 						// après son point départ de notre sens de déplacement
 						// actuel
-						estDispo = (OutilsGeometriques.produitScalaire(clientPrioritaire.getDepart(),
-								clientPrioritaire.getArrivee(), client.getDepart(), client.getArrivee()) >= 0);
+						estDispo = (OutilsGeometriques.produitScalaire(clientPrioritaire.getDepart(), clientPrioritaire
+								.getArrivee(), client.getDepart(), client.getArrivee()) >= 0);
 					}
 				}
 			}
