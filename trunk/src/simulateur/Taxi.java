@@ -111,15 +111,9 @@ public class Taxi {
 		if (estDispo && clients.size() > 0) {
 			estDispo = false;
 
-			// Vecteur direction partant de l'arrivée
-			Point2D.Double vectDirArrivee = new Point2D.Double();
-			vectDirArrivee.setLocation(clientPrioritaire.getArrivee());
-			vectDirArrivee.x += sigmaX;
-			vectDirArrivee.y += sigmaY;
-
 			// Si le départ du nouveau client est après l'arrivée du client
 			// courant on accepte toujours le nouveau client
-			if (OutilsGeometriques.produitScalaire(clientPrioritaire.getArrivee(), vectDirArrivee, clientPrioritaire
+			if (OutilsGeometriques.produitScalaire(clientPrioritaire.getDepart(), clientPrioritaire.getArrivee(), clientPrioritaire
 					.getArrivee(), client.getDepart()) >= 0) {
 				estDispo = true;
 			} else {
@@ -145,7 +139,7 @@ public class Taxi {
 							client.getArrivee()) * 9 <= ptDepartBande.distanceSq(clientPrioritaire.getArrivee()) && OutilsGeometriques
 							.produitScalaire(ptDepartBande, clientPrioritaire.getArrivee(), ptDepartBande, client
 									.getArrivee()) >= 0)
-							|| OutilsGeometriques.produitScalaire(clientPrioritaire.getArrivee(), vectDirArrivee,
+							|| OutilsGeometriques.produitScalaire(clientPrioritaire.getDepart(), clientPrioritaire.getArrivee(),
 									clientPrioritaire.getArrivee(), client.getArrivee()) >= 0) {
 						// On souhaite ensuite que l'arrivée du nouveau soit
 						// après son point départ de notre sens de déplacement
